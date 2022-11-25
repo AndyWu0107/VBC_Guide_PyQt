@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>windForceVehAssign</class>
+ <widget class="QDialog" name="windForceVehAssign">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>941</width>
+    <height>547</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>941</width>
+    <height>547</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>941</width>
+    <height>547</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>车辆风荷载分配</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>VBC.png</normaloff>VBC.png</iconset>
+  </property>
+  <widget class="QTableWidget" name="windForceVehAssignTable">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>901</width>
+     <height>471</height>
+    </rect>
+   </property>
+   <attribute name="verticalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <column>
+    <property name="text">
+     <string>车辆序号</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>车辆名</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>是否均匀风场</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>控制点1处风荷载</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>控制点2处风荷载</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QPushButton" name="windForceVehAssignSave">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>510</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="windForceVehAssignAbandon">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>510</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>放弃</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

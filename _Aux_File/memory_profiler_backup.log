@@ -1,0 +1,538 @@
+Filename: D:/VBC_Guide/ui_MainWindow.py
+
+Line #    Mem usage    Increment  Occurences   Line Contents
+============================================================
+  3751 169.2461 MiB 169.2461 MiB           1       @profile(precision=4, stream=open('memory_profiler.log', 'w+'))
+  3752                                             def gen_post_table_action(self):
+  3753 169.2461 MiB   0.0000 MiB           1           if not self.post_table_dir_list:
+  3754                                                     QMessageBox.warning(self, '警告', '选中的子项目文件夹无效。')
+  3755                                                     return
+  3756                                         
+  3757 169.2461 MiB   0.0000 MiB           1           speed_count_list = []
+  3758 169.2617 MiB   0.0000 MiB           2           for h_path in self.post_table_dir_list:
+  3759 169.2500 MiB   0.0039 MiB           1               veh_org = VehOrg()
+  3760 169.2500 MiB   0.0000 MiB           1               try:
+  3761 169.2617 MiB   0.0117 MiB           1                   veh_org.read_dat(h_path)
+  3762 169.2617 MiB   0.0000 MiB           1                   h_veh_org_matrix = veh_org.org_matrix_verified
+  3763 169.2617 MiB   0.0000 MiB           1                   del veh_org
+  3764                                                     except:
+  3765                                                         QMessageBox.warning(self, '警告', '%sVehicleOrganization.dat文件不存在或存在错误，操作已取消。' % h_path)
+  3766                                                         return
+  3767                                                     # h_speed_count = len(h_veh_org_matrix[0])-1
+  3768                                                     # speed_count_list.append(h_speed_count)
+  3769                                                     # if len(set(speed_count_list)) > 1:
+  3770                                                     #     QMessageBox(self, '警告', '选取的各个子项目中速度档数不一致，无法一同汇总，\n操作已取消。')
+  3771                                                     #     return
+  3772                                         
+  3773                                                 # 根据窗口控件状态，确定信号处理方法
+  3774 169.2617 MiB   0.0000 MiB           1           veh_acc_filt_range = [self.vehAccMinFreqEnter.value(), self.vehAccMaxFreqEnter.value()]  # 不管是否用到，都提前定义这个变量，防止出现未定义的报错
+  3775 169.2617 MiB   0.0000 MiB           1           if self.vehAccDataProcSel.currentIndex() == 0:
+  3776 169.2617 MiB   0.0000 MiB           1               veh_acc_method = 'max'
+  3777                                                 else:
+  3778                                                     veh_acc_method = 'filt_max'
+  3779                                                     if veh_acc_filt_range[0] == veh_acc_filt_range[1]:
+  3780                                                         QMessageBox.warning(self, '警告', '车辆加速度滤波范围无效。')
+  3781                                                         return
+  3782 169.2617 MiB   0.0000 MiB           1           bri_acc_filt_range = [self.briAccMinFreqEnter.value(), self.briAccMaxFreqEnter.value()]
+  3783 169.2617 MiB   0.0000 MiB           1           if self.briAccDataProcSel.currentIndex() == 0:
+  3784 169.2617 MiB   0.0000 MiB           1               bri_acc_method = 'max'
+  3785                                                 else:
+  3786                                                     bri_acc_method = 'filt_max'
+  3787                                                     if bri_acc_filt_range[0] == bri_acc_filt_range[1]:
+  3788                                                         QMessageBox.warning(self, '警告', '结构加速度滤波范围无效。')
+  3789                                                         return
+  3790 169.2617 MiB   0.0000 MiB           1           wheel_force_filt_range = [self.wheelForceMinFreqEnter.value(), self.wheelForceMaxFreqEnter.value()]
+  3791 169.2617 MiB   0.0000 MiB           1           if self.wheelForceDataProcSel.currentIndex() == 0:
+  3792 169.2617 MiB   0.0000 MiB           1               wheel_force_method = 'max'
+  3793                                                 elif self.wheelForceDataProcSel.currentIndex() == 1:
+  3794                                                     wheel_force_method = 'filt_max'
+  3795                                                     if wheel_force_filt_range[0] == wheel_force_filt_range[1]:
+  3796                                                         QMessageBox.warning(self, '警告', '轮轨力指标滤波范围无效。')
+  3797                                                         return
+  3798                                                 else:
+  3799                                                     wheel_force_method = 'GB5599-2019'
+  3800                                         
+  3801                                                 # 用于给车型分类
+  3802                                                 # 更新dict的函数
+  3803 378.8711 MiB   0.0000 MiB          19           def update_h_max_result_dict(sub_dict_obj, veh_type, result_to_compare):
+  3804                                                     # 对于每个工况：指定用于比较的指标dict、车型、新结果，与字典中对应车型的既有结果对比，取较大的保存
+  3805                                                     # 对于总体：将每个工况dict的结果排列进总体的dict
+  3806 378.8711 MiB   0.0000 MiB          18               if veh_type in sub_dict_obj.keys():
+  3807                                                         result_to_save = [max(result_to_compare[i], sub_dict_obj[veh_type][i])
+  3808                                                                           for i in range(0, len(result_to_compare))]
+  3809                                                         sub_dict_obj[veh_type] = result_to_save
+  3810                                                     else:
+  3811 378.8711 MiB   0.0000 MiB          18                   sub_dict_obj[veh_type] = result_to_compare
+  3812                                         
+  3813 378.8711 MiB   0.0000 MiB          19           def update_total_max_result_dict(total_dict_obj, h_dict_obj):
+  3814                                                     # 每个h工况计算结束后执行此函数，将h工况算得的h_dict汇总入total_dict
+  3815 378.8711 MiB   0.0000 MiB          18               veh_list_to_consider = set(total_dict_obj.keys()).union(h_dict_obj.keys())  # 每一步h循环到这里时，total_dict还停留在上一部，而这一步循环可能需要引入新的veh_type
+  3816 378.8711 MiB   0.0000 MiB          36               for x_type in veh_list_to_consider:
+  3817                                                         # (1)total_dict数据格式预处理：如果这一步循环引入了新的车型，那么说明之前已经循环过的工况中没有这个车型，就需要给之前的工况补上空列表占位
+  3818 378.8711 MiB   0.0000 MiB          18                   if x_type not in total_dict_obj.keys():
+  3819 378.8711 MiB   0.0000 MiB          18                       if len(total_dict_obj):
+  3820                                                                 total_dict_obj[x_type] = [[]] * (len(list(total_dict_obj.values())[0])-1)  # -1: 其中一个位置是下面要塞数据的位置，塞数据的时候会append好，这里不能重复开位子
+  3821                                                             else:  # 如果total_dict还是空的，就说明循环刚开始，就不必补空list了，但要把x_type键值的最外层空位留好
+  3822 378.8711 MiB   0.0000 MiB          18                           total_dict_obj[x_type] = []
+  3823                                                         # (2)往total_dict里面塞数据
+  3824 378.8711 MiB   0.0000 MiB          18                   if x_type in h_dict_obj.keys():
+  3825 378.8711 MiB   0.0000 MiB          18                       total_dict_obj[x_type].append(h_dict_obj[x_type])
+  3826                                                         else:
+  3827                                                             total_dict_obj[x_type].append([])
+  3828                                         
+  3829                                                 # 减载率文件
+  3830 169.2617 MiB   0.0000 MiB           1           max_reduction_ration_dict_by_veh_type = {}  # {车型1id: [[车型1工况1速度1, 车型1工况1速度2...], [车型1工况2速度1, 车型1工况2速度2...]]}，未参与的工况留空list
+  3831 169.2617 MiB   0.0000 MiB           1           max_vertical_wheel_force_dict_by_veh_type = {}  # {车型1id: [[车型1工况1速度1, 车型1工况1速度2...], [车型1工况2速度1, 车型1工况2速度2...]]}
+  3832                                                 # 脱轨系数文件
+  3833 169.2617 MiB   0.0000 MiB           1           max_derail_factor_dict_by_veh_type = {}
+  3834 169.2617 MiB   0.0000 MiB           1           max_horizontal_wheel_force_dict_by_veh_type = {}
+  3835                                                 # 轮下轨道位移、轮轨相对位移文件
+  3836 169.2617 MiB   0.0000 MiB           1           max_dynamic_irr_vertical_dict_by_veh_type = {}  # 同上
+  3837 169.2617 MiB   0.0000 MiB           1           max_dynamic_irr_horizontal_dict_by_veh_type = {}
+  3838 169.2617 MiB   0.0000 MiB           1           max_dynamic_irr_yaw_dict_by_veh_type = {}
+  3839 169.2617 MiB   0.0000 MiB           1           max_wheel_rail_dis_vertical_dict_by_veh_type = {}
+  3840 169.2617 MiB   0.0000 MiB           1           max_wheel_rail_dis_horizontal_dict_by_veh_type = {}
+  3841 169.2617 MiB   0.0000 MiB           1           max_wheel_rail_dis_yaw_dict_by_veh_type = {}
+  3842                                                 # 车体加速度文件 & sperling
+  3843 169.2617 MiB   0.0000 MiB           1           max_veh_acc_vertical_front_dict_by_veh_type = {}  # 同上
+  3844 169.2617 MiB   0.0000 MiB           1           max_veh_acc_vertical_rear_dict_by_veh_type = {}
+  3845 169.2617 MiB   0.0000 MiB           1           max_veh_acc_horizontal_front_dict_by_veh_type = {}
+  3846 169.2617 MiB   0.0000 MiB           1           max_veh_acc_horizontal_rear_dict_by_veh_type = {}
+  3847 169.2617 MiB   0.0000 MiB           1           veh_sperling_vertical_front_dict_by_veh_type = {}
+  3848 169.2617 MiB   0.0000 MiB           1           veh_sperling_vertical_rear_dict_by_veh_type = {}
+  3849 169.2617 MiB   0.0000 MiB           1           veh_sperling_horizontal_front_dict_by_veh_type = {}
+  3850 169.2617 MiB   0.0000 MiB           1           veh_sperling_horizontal_rear_dict_by_veh_type = {}
+  3851                                                 # 桥梁响应文件
+  3852                                                 # [[[工况1结点1速度1, 工况1结点1速度2...], [工况1结点2速度1, 工况1结点2速度2...], ...],
+  3853                                                 #  [[工况2结点1速度1, 工况2结点1速度2...], [工况2结点2速度1, 工况2结点2速度2...], ...],
+  3854                                                 #  ...]
+  3855 169.2617 MiB   0.0000 MiB           1           max_bri_dx_list = []
+  3856 169.2617 MiB   0.0000 MiB           1           max_bri_dy_list = []
+  3857 169.2617 MiB   0.0000 MiB           1           max_bri_dz_list = []
+  3858 169.2617 MiB   0.0000 MiB           1           max_bri_rx_list = []
+  3859 169.2617 MiB   0.0000 MiB           1           max_bri_ry_list = []
+  3860 169.2617 MiB   0.0000 MiB           1           max_bri_rz_list = []
+  3861 169.2617 MiB   0.0000 MiB           1           max_bri_ax_list = []
+  3862 169.2617 MiB   0.0000 MiB           1           max_bri_ay_list = []
+  3863 169.2617 MiB   0.0000 MiB           1           max_bri_az_list = []
+  3864 169.2617 MiB   0.0000 MiB           1           max_bri_arx_list = []
+  3865 169.2617 MiB   0.0000 MiB           1           max_bri_ary_list = []
+  3866 169.2617 MiB   0.0000 MiB           1           max_bri_arz_list = []
+  3867 801.3086 MiB   0.0000 MiB           2           for h_path in self.post_table_dir_list:
+  3868                                                     # 【车】
+  3869                                                     # 总体思路：对每个子工况依次提取上道的每辆车的各个指标的最大值(list)->把各个车型的汇总表作出(dict)->再融合车类汇总表获得整体汇总表
+  3870                                         
+  3871                                                     # 减载率文件
+  3872 169.2617 MiB   0.0000 MiB           1               h_max_reduction_ration_dict_by_veh_type = {}  # {车型id1: [车型1速度1, 车型1速度2...]}
+  3873 169.2617 MiB   0.0000 MiB           1               h_max_vertical_wheel_force_dict_by_veh_type = {}  # {车型id1: [车型1速度1, 车型1速度2...]}
+  3874                                                     # 脱轨系数文件
+  3875 169.2617 MiB   0.0000 MiB           1               h_max_derail_factor_dict_by_veh_type = {}
+  3876 169.2617 MiB   0.0000 MiB           1               h_max_horizontal_wheel_force_dict_by_veh_type = {}
+  3877                                                     # 轮下轨道位移、轮轨相对位移文件
+  3878 169.2617 MiB   0.0000 MiB           1               h_max_dynamic_irr_vertical_dict_by_veh_type = {}  # 同上
+  3879 169.2617 MiB   0.0000 MiB           1               h_max_dynamic_irr_horizontal_dict_by_veh_type = {}
+  3880 169.2617 MiB   0.0000 MiB           1               h_max_dynamic_irr_yaw_dict_by_veh_type = {}
+  3881 169.2617 MiB   0.0000 MiB           1               h_max_wheel_rail_dis_vertical_dict_by_veh_type = {}
+  3882 169.2617 MiB   0.0000 MiB           1               h_max_wheel_rail_dis_horizontal_dict_by_veh_type = {}
+  3883 169.2617 MiB   0.0000 MiB           1               h_max_wheel_rail_dis_yaw_dict_by_veh_type = {}
+  3884                                                     # 车体加速度文件 & sperling
+  3885 169.2617 MiB   0.0000 MiB           1               h_max_veh_acc_vertical_front_dict_by_veh_type = {}  # 同上
+  3886 169.2617 MiB   0.0000 MiB           1               h_max_veh_acc_vertical_rear_dict_by_veh_type = {}
+  3887 169.2617 MiB   0.0000 MiB           1               h_max_veh_acc_horizontal_front_dict_by_veh_type = {}
+  3888 169.2617 MiB   0.0000 MiB           1               h_max_veh_acc_horizontal_rear_dict_by_veh_type = {}
+  3889 169.2617 MiB   0.0000 MiB           1               h_veh_sperling_vertical_front_dict_by_veh_type = {}  # 同上
+  3890 169.2617 MiB   0.0000 MiB           1               h_veh_sperling_vertical_rear_dict_by_veh_type = {}
+  3891 169.2617 MiB   0.0000 MiB           1               h_veh_sperling_horizontal_front_dict_by_veh_type = {}
+  3892 169.2617 MiB   0.0000 MiB           1               h_veh_sperling_horizontal_rear_dict_by_veh_type = {}
+  3893                                         
+  3894 169.2617 MiB   0.0000 MiB           1               try:
+  3895 169.2617 MiB   0.0000 MiB           1                   msv = SubVeh()
+  3896 170.3984 MiB   1.1367 MiB           1                   msv.read_dat(h_path)
+  3897 170.3984 MiB   0.0000 MiB           1                   h_vehicle_type_dict = msv.vehicle_type_dict  # 永远从窗口安装目录的dat中动态更新，不理睬项目工况文件{vbc代号: 名称}
+  3898 170.3984 MiB   0.0000 MiB           1                   del msv
+  3899                                                     except:
+  3900                                                         QMessageBox.warning(self, '警告', '%sModal_Substructure_Bridge.dat文件不存在或存在错误，操作已取消。' % h_path)
+  3901                                                         return
+  3902                                         
+  3903 170.3984 MiB   0.0000 MiB           1               veh_org = VehOrg()
+  3904 170.3984 MiB   0.0000 MiB           1               veh_org.read_dat(h_path)
+  3905 170.3984 MiB   0.0000 MiB           1               h_veh_matrix = veh_org.veh_matrix_verified
+  3906 170.3984 MiB   0.0000 MiB           1               h_train_name_vec = veh_org.train_name_vec
+  3907 170.3984 MiB   0.0000 MiB           1               h_veh_num_each_train = veh_org.veh_num_each_train
+  3908 170.3984 MiB   0.0000 MiB           1               h_veh_org_matrix = veh_org.org_matrix_verified
+  3909 170.3984 MiB   0.0000 MiB           1               h_train_num_on_way = veh_org.train_num_on_way
+  3910 170.3984 MiB   0.0000 MiB           1               del veh_org
+  3911                                         
+  3912 170.3984 MiB   0.0000 MiB           1               h_vehicle_list = []
+  3913 170.3984 MiB   0.0000 MiB           1               h_veh_num_list = []
+  3914 170.3984 MiB   0.0000 MiB           1               wheelset_num_list = []
+  3915 170.3984 MiB   0.0000 MiB           1               if_locomotice_list = []
+  3916 170.3984 MiB   0.0000 MiB           1               train_id_in_vbc_of_each_veh = []  # [第1辆车所属上道车列id, 第2辆车所属上道车列id, ...]，id从1开始
+  3917 170.3984 MiB   0.0000 MiB           2               for j_train in range(0, h_train_num_on_way):
+  3918 170.3984 MiB   0.0000 MiB           1                   j_train_ow_id_in_vbc = int(h_veh_org_matrix[j_train][0][0])
+  3919 170.3984 MiB   0.0000 MiB           1                   j_train_name = h_train_name_vec[j_train_ow_id_in_vbc-1]
+  3920 170.3984 MiB   0.0000 MiB           1                   j_vehicle_list = h_veh_matrix[j_train_ow_id_in_vbc-1]
+  3921 170.3984 MiB   0.0000 MiB           1                   h_vehicle_list = h_vehicle_list + j_vehicle_list
+  3922 170.3984 MiB   0.0000 MiB           1                   h_veh_num_list.append(len(j_vehicle_list))
+  3923 170.3984 MiB   0.0000 MiB           4                   j_wheelset_num_list = [int(h_vehicle_type_dict[i][1]/2) for i in j_vehicle_list]
+  3924 170.3984 MiB   0.0000 MiB           1                   wheelset_num_list = wheelset_num_list + j_wheelset_num_list
+  3925 170.3984 MiB   0.0000 MiB           4                   j_if_locomotive_list = [h_vehicle_type_dict[i][2] for i in j_vehicle_list]
+  3926 170.3984 MiB   0.0000 MiB           1                   if_locomotice_list = if_locomotice_list + j_if_locomotive_list
+  3927 170.3984 MiB   0.0000 MiB           1                   train_id_in_vbc_of_each_veh += ([j_train_ow_id_in_vbc]*len(j_vehicle_list))
+  3928                                         
+  3929                                         
+  3930                                                     # 按文件顺序读取数据，保证每个文件只读取一次，然后再在内存中分类整理处理
+  3931                                                     # 减载率文件
+  3932 170.3984 MiB   0.0000 MiB           1               bin_file_reduct = 'Res_ReductionRation_Vehicles.bin'
+  3933 170.3984 MiB   0.0000 MiB           2               concerned_list_reduct = list(range(1, 2*sum(wheelset_num_list)+1, 2))\
+  3934 170.3984 MiB   0.0000 MiB           1                                       + list(range(2, 2*sum(wheelset_num_list)+1, 2))  # 先读所有轴的减载率，再读所有轴的动轴重
+  3935                                                     # data_reduct每个速度档的前半段(0-sum(wheelset_list)-1)是减载率，后半段是动轴重
+  3936 205.1484 MiB  34.7500 MiB           1               data_reduct, dt, speed_count = vbc_data_read(path=h_path, file=bin_file_reduct, i_concerned=concerned_list_reduct)
+  3937                                                     # 脱轨系数文件
+  3938 205.1484 MiB   0.0000 MiB           1               bin_file_derail = 'Res_DerailmentFactor_Vehicles.bin'
+  3939 205.1484 MiB   0.0000 MiB           1               concerned_list_derail = concerned_list_reduct  # 脱轨系数和减载率bin文件格式相同
+  3940 240.9766 MiB  35.8281 MiB           1               data_derail, dt, speed_count = vbc_data_read(path=h_path, file=bin_file_derail, i_concerned=concerned_list_derail)
+  3941                                                     # 轮下轨道位移、轮轨相对位移文件
+  3942 240.9766 MiB   0.0000 MiB           1               bin_file_wheelset = 'Res_WheelsetirregDisVehilces.bin'
+  3943 240.9766 MiB   0.0000 MiB           6               concerned_list_wheelset = list(range(1, 6*sum(wheelset_num_list)+1, 6))\
+  3944 240.9766 MiB   0.0000 MiB           1                                         + list(range(2, 6*sum(wheelset_num_list)+1, 6))\
+  3945 240.9766 MiB   0.0000 MiB           1                                         + list(range(3, 6*sum(wheelset_num_list)+1, 6))\
+  3946 240.9766 MiB   0.0000 MiB           1                                         + list(range(4, 6*sum(wheelset_num_list)+1, 6))\
+  3947 240.9766 MiB   0.0000 MiB           1                                         + list(range(5, 6*sum(wheelset_num_list)+1, 6))\
+  3948 240.9766 MiB   0.0000 MiB           1                                         + list(range(6, 6*sum(wheelset_num_list)+1, 6))  # 依次读取所有轴的6项指标：动态不平顺(3项，竖、横、摇)，轮轨相对位移(3项，竖、横、摇)
+  3949 348.4609 MiB 107.4844 MiB           1               data_wheelset, dt, speed_count = vbc_data_read(path=h_path, file=bin_file_wheelset, i_concerned=concerned_list_wheelset)
+  3950                                                     # 车体加速度文件
+  3951 348.4609 MiB   0.0000 MiB           1               bin_file_veh_acc = 'Res_AccResults_Vehicles.bin'
+  3952 348.4609 MiB   0.0000 MiB           4               concerned_list_veh_acc = list(range(1, 6*sum(h_veh_num_list)+1, 6))\
+  3953 348.4609 MiB   0.0000 MiB           1                                        + list(range(3, 6*sum(h_veh_num_list)+1, 6))\
+  3954 348.4609 MiB   0.0000 MiB           1                                        + list(range(4, 6*sum(h_veh_num_list)+1, 6))\
+  3955 348.4609 MiB   0.0000 MiB           1                                        + list(range(6, 6*sum(h_veh_num_list)+1, 6))  # 依次读取所有车体的4项指标：竖acc前，竖acc后，横acc前，横acc后
+  3956 373.5625 MiB  25.1016 MiB           1               data_veh_acc, dt, speed_count = vbc_data_read(path=h_path, file=bin_file_veh_acc, i_concerned=concerned_list_veh_acc)
+  3957                                         
+  3958                                                     # 从上面读取的数据中抓最大值，每辆车抓一个
+  3959                                                     # 减载率文件
+  3960 373.5625 MiB   0.0000 MiB           1               h_max_reduction_ration_list = []  # [[第1辆车速度1, 第1辆车速度2, 第1辆车速度3...], [第2辆车速度1, 第2辆车速度2...]]
+  3961 373.5625 MiB   0.0000 MiB           1               h_max_vertical_wheel_force_list = []  # 同上
+  3962                                                     # 减载率文件
+  3963 373.5625 MiB   0.0000 MiB           1               h_max_derail_factor_list = []
+  3964 373.5625 MiB   0.0000 MiB           1               h_max_horizontal_wheel_force_list = []
+  3965                                                     # 轮下轨道位移、轮轨相对位移文件
+  3966 373.5625 MiB   0.0000 MiB           1               h_max_dynamic_irr_vertical_list = []  # 同上
+  3967 373.5625 MiB   0.0000 MiB           1               h_max_dynamic_irr_horizontal_list = []
+  3968 373.5625 MiB   0.0000 MiB           1               h_max_dynamic_irr_yaw_list = []
+  3969 373.5625 MiB   0.0000 MiB           1               h_max_wheel_rail_dis_vertical_list = []
+  3970 373.5625 MiB   0.0000 MiB           1               h_max_wheel_rail_dis_horizontal_list = []
+  3971 373.5625 MiB   0.0000 MiB           1               h_max_wheel_rail_dis_yaw_list = []
+  3972                                                     # 车体加速度文件 & sperling
+  3973 373.5625 MiB   0.0000 MiB           1               h_max_veh_acc_vertical_front_list = []  # 同上
+  3974 373.5625 MiB   0.0000 MiB           1               h_max_veh_acc_vertical_rear_list = []
+  3975 373.5625 MiB   0.0000 MiB           1               h_max_veh_acc_horizontal_front_list = []
+  3976 373.5625 MiB   0.0000 MiB           1               h_max_veh_acc_horizontal_rear_list = []
+  3977 373.5625 MiB   0.0000 MiB           1               h_veh_sperling_vertical_front_list = []
+  3978 373.5625 MiB   0.0000 MiB           1               h_veh_sperling_vertical_rear_list = []
+  3979 373.5625 MiB   0.0000 MiB           1               h_veh_sperling_horizontal_front_list = []
+  3980 373.5625 MiB   0.0000 MiB           1               h_veh_sperling_horizontal_rear_list = []
+  3981                                         
+  3982                                         
+  3983 378.8711 MiB   0.0000 MiB           2               for k_veh in range(0, len(h_vehicle_list)):  # k_veh+1相当于show_plot函数中的i_veh_in_vbc
+  3984 373.5625 MiB   0.0000 MiB           1                   train_order_of_k_veh = train_id_in_vbc_of_each_veh[k_veh]  # 当前这第k辆车属于第几列车，用于读取这列车速度
+  3985 373.5625 MiB   0.0000 MiB           1                   k_if_locomotive = if_locomotice_list[k_veh]
+  3986 373.5625 MiB   0.0000 MiB           1                   k_wheelset_num = wheelset_num_list[k_veh]
+  3987 373.5625 MiB   0.0000 MiB          12                   k_wheelset_range_in_vbc = [sum(wheelset_num_list[0:k_veh])+l_wheelset
+  3988 373.5625 MiB   0.0000 MiB           1                                              for l_wheelset in range(0, k_wheelset_num)]  # 第k辆车在bin文件中的轮对序号范围(也就是所有参与计算的第几个轮对)，从0开始
+  3989                                                         # 减载率文件
+  3990 373.5625 MiB   0.0000 MiB           4                   k_max_reduction_ration_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车所有轮对的最大减载率
+  3991 373.5625 MiB   0.0000 MiB           4                   k_max_vertical_wheel_force_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车各轮对的最大动轴重
+  3992                                                         # 脱轨系数文件
+  3993 373.5625 MiB   0.0000 MiB           4                   k_max_derail_factor_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车所有轮对的最大脱轨系数
+  3994 373.5625 MiB   0.0000 MiB           4                   k_max_horizontal_wheel_force_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车各轮对的最大轮轨横向力
+  3995                                                         # 轮下轨道位移、轮轨相对位移文件
+  3996 373.5625 MiB   0.0000 MiB           4                   k_max_dynamic_irr_vertical_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车各轮对的最大动态竖向不平顺
+  3997 373.5625 MiB   0.0000 MiB           4                   k_max_dynamic_irr_horizontal_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车各轮对的最大动态横向不平顺
+  3998 373.5625 MiB   0.0000 MiB           4                   k_max_dynamic_irr_yaw_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车各轮对的最大动态摇头不平顺
+  3999 373.5625 MiB   0.0000 MiB           4                   k_max_wheel_rail_dis_vertical_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车各轮对的最大轮轨竖向相对位移
+  4000 373.5625 MiB   0.0000 MiB           4                   k_max_wheel_rail_dis_horizontal_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车各轮对的最大轮轨横向相对位移
+  4001 373.5625 MiB   0.0000 MiB           4                   k_max_wheel_rail_dis_yaw_list = [[] for i in range(speed_count)]  # 用于存储各速度档下第k辆车各轮对的最大轮轨摇头相对位移
+  4002                                                         # 车体加速度文件
+  4003 373.5625 MiB   0.0000 MiB           1                   h_vehicle_count = sum(h_veh_num_list)
+  4004 375.3125 MiB   1.7500 MiB           7                   k_max_veh_acc_vertical_front = [get_data_for_table(data_veh_acc[m][0*h_vehicle_count+k_veh],
+  4005 373.5625 MiB   0.0000 MiB           1                                                                      veh_acc_method, dt, veh_acc_filt_range,
+  4006 373.5625 MiB   0.0000 MiB           1                                                                      h_veh_org_matrix[train_order_of_k_veh-1][m+1][0])
+  4007 373.5625 MiB   0.0000 MiB           1                                                   for m in range(len(data_veh_acc))]  # 一维，各速度档第k车厢前部竖向acc最大值
+  4008 375.3164 MiB   0.0039 MiB           7                   k_max_veh_acc_vertical_rear = [get_data_for_table(data_veh_acc[m][1*h_vehicle_count+k_veh],
+  4009 375.3125 MiB   0.0000 MiB           1                                                                     veh_acc_method, dt, veh_acc_filt_range,
+  4010 375.3125 MiB   0.0000 MiB           1                                                                     h_veh_org_matrix[train_order_of_k_veh-1][m+1][0])
+  4011 375.3125 MiB   0.0000 MiB           1                                                  for m in range(len(data_veh_acc))]
+  4012 375.3203 MiB   0.0039 MiB           7                   k_max_veh_acc_horizontal_front = [get_data_for_table(data_veh_acc[m][2*h_vehicle_count+k_veh],
+  4013 375.3164 MiB   0.0000 MiB           1                                                                        veh_acc_method, dt, veh_acc_filt_range,
+  4014 375.3164 MiB   0.0000 MiB           1                                                                        h_veh_org_matrix[train_order_of_k_veh-1][m+1][0])
+  4015 375.3164 MiB   0.0000 MiB           1                                                     for m in range(len(data_veh_acc))]
+  4016 375.3203 MiB   0.0000 MiB           7                   k_max_veh_acc_horizontal_rear = [get_data_for_table(data_veh_acc[m][3*h_vehicle_count+k_veh],
+  4017 375.3203 MiB   0.0000 MiB           1                                                                       veh_acc_method, dt, veh_acc_filt_range,
+  4018 375.3203 MiB   0.0000 MiB           1                                                                       h_veh_org_matrix[train_order_of_k_veh-1][m+1][0])
+  4019 375.3203 MiB   0.0000 MiB           1                                                    for m in range(len(data_veh_acc))]
+  4020 377.2070 MiB   1.8867 MiB           7                   k_veh_sperling_vertical_front = [sperling(data_veh_acc[m][0 * h_vehicle_count + k_veh],
+  4021 375.3203 MiB   0.0000 MiB           1                                                             k_if_locomotive, True, dt)
+  4022 375.3203 MiB   0.0000 MiB           1                                                    for m in range(len(data_veh_acc))]  # 一维，各速度档第k车厢前部竖向sperling
+  4023 378.3008 MiB   1.0938 MiB           7                   k_veh_sperling_vertical_rear = [sperling(data_veh_acc[m][1 * h_vehicle_count + k_veh],
+  4024 377.2070 MiB   0.0000 MiB           1                                                            k_if_locomotive, True, dt)
+  4025 377.2070 MiB   0.0000 MiB           1                                                   for m in range(len(data_veh_acc))]
+  4026 378.6055 MiB   0.3047 MiB           7                   k_veh_sperling_horizontal_front = [sperling(data_veh_acc[m][2 * h_vehicle_count + k_veh],
+  4027 378.3008 MiB   0.0000 MiB           1                                                               k_if_locomotive, False, dt)
+  4028 378.3008 MiB   0.0000 MiB           1                                                      for m in range(len(data_veh_acc))]
+  4029 378.8672 MiB   0.2617 MiB           7                   k_veh_sperling_horizontal_rear = [sperling(data_veh_acc[m][3 * h_vehicle_count + k_veh],
+  4030 378.6055 MiB   0.0000 MiB           1                                                              k_if_locomotive, False, dt)
+  4031 378.6055 MiB   0.0000 MiB           1                                                     for m in range(len(data_veh_acc))]
+  4032 378.8672 MiB   0.0000 MiB           1                   h_max_veh_acc_vertical_front_list.append(k_max_veh_acc_vertical_front)
+  4033 378.8672 MiB   0.0000 MiB           1                   h_max_veh_acc_vertical_rear_list.append(k_max_veh_acc_vertical_rear)
+  4034 378.8672 MiB   0.0000 MiB           1                   h_max_veh_acc_horizontal_front_list.append(k_max_veh_acc_horizontal_front)
+  4035 378.8672 MiB   0.0000 MiB           1                   h_max_veh_acc_horizontal_rear_list.append(k_max_veh_acc_horizontal_rear)
+  4036 378.8672 MiB   0.0000 MiB           1                   h_veh_sperling_vertical_front_list.append(k_veh_sperling_vertical_front)
+  4037 378.8672 MiB   0.0000 MiB           1                   h_veh_sperling_vertical_rear_list.append(k_veh_sperling_vertical_rear)
+  4038 378.8672 MiB   0.0000 MiB           1                   h_veh_sperling_horizontal_front_list.append(k_veh_sperling_horizontal_front)
+  4039 378.8672 MiB   0.0000 MiB           1                   h_veh_sperling_horizontal_rear_list.append(k_veh_sperling_horizontal_rear)
+  4040 378.8672 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_veh_acc_vertical_front_dict_by_veh_type,
+  4041 378.8672 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_veh_acc_vertical_front)
+  4042 378.8672 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_veh_acc_vertical_rear_dict_by_veh_type,
+  4043 378.8672 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_veh_acc_vertical_rear)
+  4044 378.8672 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_veh_acc_horizontal_front_dict_by_veh_type,
+  4045 378.8672 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_veh_acc_horizontal_front)
+  4046 378.8672 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_veh_acc_horizontal_rear_dict_by_veh_type,
+  4047 378.8672 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_veh_acc_horizontal_rear)
+  4048 378.8672 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_veh_sperling_vertical_front_dict_by_veh_type,
+  4049 378.8672 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_veh_sperling_vertical_front)
+  4050 378.8672 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_veh_sperling_vertical_rear_dict_by_veh_type,
+  4051 378.8672 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_veh_sperling_vertical_rear)
+  4052 378.8672 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_veh_sperling_horizontal_front_dict_by_veh_type,
+  4053 378.8672 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_veh_sperling_horizontal_front)
+  4054 378.8672 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_veh_sperling_horizontal_rear_dict_by_veh_type,
+  4055 378.8672 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_veh_sperling_horizontal_rear)
+  4056                                         
+  4057 378.8711 MiB   0.0000 MiB           5                   for l_wheelset in k_wheelset_range_in_vbc:
+  4058                                                             # 减载率文件
+  4059 378.8672 MiB   0.0000 MiB          28                       l_max_reduction_ration = [get_data_for_table(data_reduct[m][l_wheelset],
+  4060 378.8672 MiB   0.0000 MiB           4                                                                    wheel_force_method, dt, wheel_force_filt_range,
+  4061 378.8672 MiB   0.0000 MiB           4                                                                    h_veh_org_matrix[train_order_of_k_veh-1][m+1][0],
+  4062 378.8672 MiB   0.0000 MiB           4                                                                    abs_for_max = False)
+  4063 378.8672 MiB   0.0000 MiB           4                                                 for m in range(len(data_reduct))]  # 一维，各速度档该轮对最大减载率
+  4064 378.8672 MiB   0.0000 MiB          16                       [k_max_reduction_ration_list[i].append(l_max_reduction_ration[i]) for i in range(speed_count)]
+  4065 378.8711 MiB   0.0039 MiB          28                       l_max_vertical_wheel_force_list = [get_data_for_table(data_reduct[m][l_wheelset+sum(wheelset_num_list)],
+  4066 378.8672 MiB   0.0000 MiB           4                                                                             wheel_force_method, dt, wheel_force_filt_range,
+  4067 378.8672 MiB   0.0000 MiB           4                                                                             h_veh_org_matrix[train_order_of_k_veh-1][m+1][0])
+  4068 378.8672 MiB   0.0000 MiB           4                                                          for m in range(len(data_reduct))]
+  4069 378.8711 MiB   0.0000 MiB          16                       [k_max_vertical_wheel_force_list[i].append(l_max_vertical_wheel_force_list[i]) for i in range(speed_count)]
+  4070                                                             # 脱轨系数文件
+  4071 378.8711 MiB   0.0000 MiB          28                       l_max_derail_factor = [get_data_for_table(data_derail[m][l_wheelset],
+  4072 378.8711 MiB   0.0000 MiB           4                                                                 wheel_force_method, dt, wheel_force_filt_range,
+  4073 378.8711 MiB   0.0000 MiB           4                                                                 h_veh_org_matrix[train_order_of_k_veh-1][m+1][0])
+  4074 378.8711 MiB   0.0000 MiB           4                                              for m in range(len(data_derail))]  # 一维，各速度档该轮对最大脱轨系数
+  4075 378.8711 MiB   0.0000 MiB          16                       [k_max_derail_factor_list[i].append(l_max_derail_factor[i]) for i in range(speed_count)]
+  4076 378.8711 MiB   0.0000 MiB          28                       l_max_horizontal_wheel_force_list = [get_data_for_table(data_derail[m][l_wheelset+sum(wheelset_num_list)],
+  4077 378.8711 MiB   0.0000 MiB           4                                                                               wheel_force_method, dt, wheel_force_filt_range,
+  4078 378.8711 MiB   0.0000 MiB           4                                                                               h_veh_org_matrix[train_order_of_k_veh-1][m+1][0])
+  4079 378.8711 MiB   0.0000 MiB           4                                                            for m in range(len(data_derail))]
+  4080 378.8711 MiB   0.0000 MiB          16                       [k_max_horizontal_wheel_force_list[i].append(l_max_horizontal_wheel_force_list[i]) for i in range(speed_count)]
+  4081                                                             # 轮下轨道位移、轮轨相对位移文件
+  4082 378.8711 MiB   0.0000 MiB          16                       l_max_dynamic_irr_vertical_list = [max(m_data[l_wheelset]) for m_data in data_wheelset]  # 一维，各速度档该轮对最大动态竖向不平顺
+  4083 378.8711 MiB   0.0000 MiB          16                       [k_max_dynamic_irr_vertical_list[i].append(l_max_dynamic_irr_vertical_list[i]) for i in range(speed_count)]
+  4084 378.8711 MiB   0.0000 MiB          16                       l_max_dynamic_irr_horizontal_list = [max(m_data[l_wheelset+sum(wheelset_num_list)]) for m_data in data_wheelset]  # 一维，各速度档该轮对最大动态横向不平顺
+  4085 378.8711 MiB   0.0000 MiB          16                       [k_max_dynamic_irr_horizontal_list[i].append(l_max_dynamic_irr_horizontal_list[i]) for i in range(speed_count)]
+  4086 378.8711 MiB   0.0000 MiB          16                       l_max_dynamic_irr_yaw_list = [max(m_data[l_wheelset+sum(wheelset_num_list)*2]) for m_data in data_wheelset]  # 一维，各速度档该轮对最大动态摇头不平顺
+  4087 378.8711 MiB   0.0000 MiB          16                       [k_max_dynamic_irr_yaw_list[i].append(l_max_dynamic_irr_yaw_list[i]) for i in range(speed_count)]
+  4088 378.8711 MiB   0.0000 MiB          16                       l_max_wheel_rail_dis_vertical_list = [max(m_data[l_wheelset+sum(wheelset_num_list)*3]) for m_data in data_wheelset]  # 一维，各速度档该轮对最大轮轨竖向相对位移
+  4089 378.8711 MiB   0.0000 MiB          16                       [k_max_wheel_rail_dis_vertical_list[i].append(l_max_wheel_rail_dis_vertical_list[i]) for i in range(speed_count)]
+  4090 378.8711 MiB   0.0000 MiB          16                       l_max_wheel_rail_dis_horizontal_list = [max(m_data[l_wheelset+sum(wheelset_num_list)*4]) for m_data in data_wheelset]  # 一维，各速度档该轮对最大轮轨横向相对位移
+  4091 378.8711 MiB   0.0000 MiB          16                       [k_max_wheel_rail_dis_horizontal_list[i].append(l_max_wheel_rail_dis_horizontal_list[i]) for i in range(speed_count)]
+  4092 378.8711 MiB   0.0000 MiB          16                       l_max_wheel_rail_dis_yaw_list = [max(m_data[l_wheelset+sum(wheelset_num_list)*5]) for m_data in data_wheelset]  # 一维，各速度档该轮对最大轮轨摇头相对位移
+  4093 378.8711 MiB   0.0000 MiB          16                       [k_max_wheel_rail_dis_yaw_list[i].append(l_max_wheel_rail_dis_yaw_list[i]) for i in range(speed_count)]
+  4094                                         
+  4095                                                         # 减载率文件
+  4096 378.8711 MiB   0.0000 MiB           4                   k_max_reduction_ration = [max(i) for i in k_max_reduction_ration_list]  # 用于存储各速度档下第k辆车的【最大减载率的】最大值
+  4097 378.8711 MiB   0.0000 MiB           4                   k_max_vertical_wheel_force = [max(i) for i in k_max_vertical_wheel_force_list]  # 用于存储各速度档下第k辆车的【最大动轴重的】最大值
+  4098 378.8711 MiB   0.0000 MiB           1                   h_max_reduction_ration_list.append(k_max_reduction_ration)
+  4099 378.8711 MiB   0.0000 MiB           1                   h_max_vertical_wheel_force_list.append(k_max_vertical_wheel_force)
+  4100 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_reduction_ration_dict_by_veh_type,
+  4101 378.8711 MiB   0.0000 MiB           1                                          h_vehicle_list[k_veh], k_max_reduction_ration)
+  4102 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_vertical_wheel_force_dict_by_veh_type,
+  4103 378.8711 MiB   0.0000 MiB           1                                          h_vehicle_list[k_veh], k_max_vertical_wheel_force)
+  4104                                                         # 脱轨系数文件
+  4105 378.8711 MiB   0.0000 MiB           4                   k_max_derail_factor = [max(i) for i in k_max_derail_factor_list]  # 用于存储各速度档下第k辆车的【最大脱轨系数的】最大值
+  4106 378.8711 MiB   0.0000 MiB           4                   k_max_horizontal_wheel_force = [max(i) for i in k_max_horizontal_wheel_force_list]  # 用于存储各速度档下第k辆车的【最大横向轮轨力的】最大值
+  4107 378.8711 MiB   0.0000 MiB           1                   h_max_derail_factor_list.append(k_max_derail_factor)
+  4108 378.8711 MiB   0.0000 MiB           1                   h_max_horizontal_wheel_force_list.append(k_max_horizontal_wheel_force)
+  4109 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_derail_factor_dict_by_veh_type,
+  4110 378.8711 MiB   0.0000 MiB           1                                          h_vehicle_list[k_veh], k_max_derail_factor)
+  4111 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_horizontal_wheel_force_dict_by_veh_type,
+  4112 378.8711 MiB   0.0000 MiB           1                                          h_vehicle_list[k_veh], k_max_horizontal_wheel_force)
+  4113                                                         # 轮下轨道位移、轮轨相对位移文件
+  4114 378.8711 MiB   0.0000 MiB           4                   k_max_dynamic_irr_vertical = [max(i) for i in k_max_dynamic_irr_vertical_list]  # 用于存储各速度档下第k辆车的【最大动态竖向不平顺的】最大值
+  4115 378.8711 MiB   0.0000 MiB           4                   k_max_dynamic_irr_horizontal = [max(i) for i in k_max_dynamic_irr_horizontal_list]  # 用于存储各速度档下第k辆车的【最大动态横向不平顺的】最大值
+  4116 378.8711 MiB   0.0000 MiB           4                   k_max_dynamic_irr_yaw = [max(i) for i in k_max_dynamic_irr_yaw_list]  # 用于存储各速度档下第k辆车的【最大动态摇头不平顺的】最大值
+  4117 378.8711 MiB   0.0000 MiB           4                   k_max_wheel_rail_dis_vertical = [max(i) for i in k_max_wheel_rail_dis_vertical_list]  # 用于存储各速度档下第k辆车的【最大轮轨竖向相对位移的】最大值
+  4118 378.8711 MiB   0.0000 MiB           4                   k_max_wheel_rail_dis_horizontal = [max(i) for i in k_max_wheel_rail_dis_horizontal_list]  # 用于存储各速度档下第k辆车的【最大轮轨横向相对位移的】最大值
+  4119 378.8711 MiB   0.0000 MiB           4                   k_max_wheel_rail_dis_yaw = [max(i) for i in k_max_wheel_rail_dis_yaw_list]  # 用于存储各速度档下第k辆车的【最大轮轨摇头相对位移的】最大值
+  4120 378.8711 MiB   0.0000 MiB           1                   h_max_dynamic_irr_vertical_list.append(k_max_dynamic_irr_vertical)
+  4121 378.8711 MiB   0.0000 MiB           1                   h_max_dynamic_irr_horizontal_list.append(k_max_dynamic_irr_horizontal)
+  4122 378.8711 MiB   0.0000 MiB           1                   h_max_dynamic_irr_yaw_list.append(k_max_dynamic_irr_yaw)
+  4123 378.8711 MiB   0.0000 MiB           1                   h_max_wheel_rail_dis_vertical_list.append(k_max_wheel_rail_dis_vertical)
+  4124 378.8711 MiB   0.0000 MiB           1                   h_max_wheel_rail_dis_horizontal_list.append(k_max_wheel_rail_dis_horizontal)
+  4125 378.8711 MiB   0.0000 MiB           1                   h_max_wheel_rail_dis_yaw_list.append(k_max_wheel_rail_dis_yaw)
+  4126 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_dynamic_irr_vertical_dict_by_veh_type,
+  4127 378.8711 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_dynamic_irr_vertical)
+  4128 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_dynamic_irr_horizontal_dict_by_veh_type,
+  4129 378.8711 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_dynamic_irr_horizontal)
+  4130 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_dynamic_irr_yaw_dict_by_veh_type,
+  4131 378.8711 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_dynamic_irr_yaw)
+  4132 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_wheel_rail_dis_vertical_dict_by_veh_type,
+  4133 378.8711 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_wheel_rail_dis_vertical)
+  4134 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_wheel_rail_dis_horizontal_dict_by_veh_type,
+  4135 378.8711 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_wheel_rail_dis_horizontal)
+  4136 378.8711 MiB   0.0000 MiB           2                   update_h_max_result_dict(h_max_wheel_rail_dis_yaw_dict_by_veh_type,
+  4137 378.8711 MiB   0.0000 MiB           1                                            h_vehicle_list[k_veh], k_max_wheel_rail_dis_yaw)
+  4138                                                         # 车体加速度文件不涉及轴，故在循环前面已经处理完
+  4139                                         
+  4140                                                     # 每个h工况计算结束后，将h工况算得的h_dict汇总入total_dict
+  4141                                                     # 减载率文件
+  4142 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_reduction_ration_dict_by_veh_type, h_max_reduction_ration_dict_by_veh_type)
+  4143 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_vertical_wheel_force_dict_by_veh_type, h_max_vertical_wheel_force_dict_by_veh_type)
+  4144                                                     # 脱轨系数文件
+  4145 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_derail_factor_dict_by_veh_type, h_max_derail_factor_dict_by_veh_type)
+  4146 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_horizontal_wheel_force_dict_by_veh_type, h_max_horizontal_wheel_force_dict_by_veh_type)
+  4147                                                     # 轮下轨道位移、轮轨相对位移文件
+  4148 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_dynamic_irr_vertical_dict_by_veh_type, h_max_dynamic_irr_vertical_dict_by_veh_type)
+  4149 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_dynamic_irr_horizontal_dict_by_veh_type, h_max_dynamic_irr_horizontal_dict_by_veh_type)
+  4150 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_dynamic_irr_yaw_dict_by_veh_type, h_max_dynamic_irr_yaw_dict_by_veh_type)
+  4151 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_wheel_rail_dis_vertical_dict_by_veh_type, h_max_wheel_rail_dis_vertical_dict_by_veh_type)
+  4152 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_wheel_rail_dis_horizontal_dict_by_veh_type, h_max_wheel_rail_dis_horizontal_dict_by_veh_type)
+  4153 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_wheel_rail_dis_yaw_dict_by_veh_type, h_max_wheel_rail_dis_yaw_dict_by_veh_type)
+  4154                                                     # 车体加速度文件 & sperling
+  4155 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_veh_acc_vertical_front_dict_by_veh_type, h_max_veh_acc_vertical_front_dict_by_veh_type)
+  4156 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_veh_acc_vertical_rear_dict_by_veh_type, h_max_veh_acc_vertical_rear_dict_by_veh_type)
+  4157 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_veh_acc_horizontal_front_dict_by_veh_type, h_max_veh_acc_horizontal_front_dict_by_veh_type)
+  4158 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(max_veh_acc_horizontal_rear_dict_by_veh_type, h_max_veh_acc_horizontal_rear_dict_by_veh_type)
+  4159 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(veh_sperling_vertical_front_dict_by_veh_type, h_veh_sperling_vertical_front_dict_by_veh_type)
+  4160 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(veh_sperling_vertical_rear_dict_by_veh_type, h_veh_sperling_vertical_rear_dict_by_veh_type)
+  4161 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(veh_sperling_horizontal_front_dict_by_veh_type, h_veh_sperling_horizontal_front_dict_by_veh_type)
+  4162 378.8711 MiB   0.0000 MiB           1               update_total_max_result_dict(veh_sperling_horizontal_rear_dict_by_veh_type, h_veh_sperling_horizontal_rear_dict_by_veh_type)
+  4163                                         
+  4164                                                     # 【桥】
+  4165 378.8711 MiB   0.0000 MiB           1               msb = SubBri()
+  4166 378.8711 MiB   0.0000 MiB           1               try:
+  4167 378.8711 MiB   0.0000 MiB           1                   msb.read_dat(h_path)
+  4168                                                     except:
+  4169                                                         QMessageBox.warning(self, '警告', '%s中Modal_Substructure_Bridge.dat文件有误。' % h_path)
+  4170                                                         return
+  4171 378.8711 MiB   0.0000 MiB           1               h_post_node_id_list = msb.id_post_nodes
+  4172 378.8711 MiB   0.0000 MiB           1               del msb
+  4173 378.8711 MiB   0.0000 MiB           1               h_post_node_count = len(h_post_node_id_list)
+  4174                                                     # 检查后处理节点list中是否有此目录未定义的节点
+  4175 378.8711 MiB   0.0000 MiB           9               for k_node in self.attend_post_node_list:
+  4176 378.8711 MiB   0.0000 MiB           8                   if k_node not in h_post_node_id_list:
+  4177                                                             QMessageBox.warning(self, '警告', '项目%s中未定义后处理结点%d。' % (h_path, k_node))
+  4178                                                             return
+  4179 378.8711 MiB   0.0000 MiB           1               bin_file_bri = 'Res_BridgeResponseBulkDate_disacc.bin'
+  4180 378.8711 MiB   0.0000 MiB          12               concerned_list_bri = list(range(1, 12*h_post_node_count+1, 12))\
+  4181 378.8711 MiB   0.0000 MiB           1                                    + list(range(3, 12*h_post_node_count+1, 12))\
+  4182 378.8711 MiB   0.0000 MiB           1                                    + list(range(5, 12*h_post_node_count+1, 12))\
+  4183 378.8711 MiB   0.0000 MiB           1                                    + list(range(7, 12*h_post_node_count+1, 12))\
+  4184 378.8711 MiB   0.0000 MiB           1                                    + list(range(9, 12*h_post_node_count+1, 12))\
+  4185 378.8711 MiB   0.0000 MiB           1                                    + list(range(11, 12*h_post_node_count+1, 12))\
+  4186 378.8711 MiB   0.0000 MiB           1                                    + list(range(2, 12*h_post_node_count+1, 12))\
+  4187 378.8711 MiB   0.0000 MiB           1                                    + list(range(4, 12*h_post_node_count+1, 12))\
+  4188 378.8711 MiB   0.0000 MiB           1                                    + list(range(6, 12*h_post_node_count+1, 12))\
+  4189 378.8711 MiB   0.0000 MiB           1                                    + list(range(8, 12*h_post_node_count+1, 12))\
+  4190 378.8711 MiB   0.0000 MiB           1                                    + list(range(10, 12*h_post_node_count+1, 12))\
+  4191 378.8711 MiB   0.0000 MiB           1                                    + list(range(12, 12*h_post_node_count+1, 12))
+  4192 798.0820 MiB 419.2109 MiB           1               data_bri, dt, speed_count = vbc_data_read(path=h_path, file=bin_file_bri, i_concerned=concerned_list_bri)
+  4193 798.0820 MiB   0.0000 MiB           1               h_max_bri_dx_list = []  # [[第1Post结点速度1, 第1post结点速度2...], [第2Post结点速度1, 第2post结点速度2...], ...]
+  4194 798.0820 MiB   0.0000 MiB           1               h_max_bri_dy_list = []
+  4195 798.0820 MiB   0.0000 MiB           1               h_max_bri_dz_list = []
+  4196 798.0820 MiB   0.0000 MiB           1               h_max_bri_rx_list = []
+  4197 798.0820 MiB   0.0000 MiB           1               h_max_bri_ry_list = []
+  4198 798.0820 MiB   0.0000 MiB           1               h_max_bri_rz_list = []
+  4199 798.0820 MiB   0.0000 MiB           1               h_max_bri_ax_list = []
+  4200 798.0820 MiB   0.0000 MiB           1               h_max_bri_ay_list = []
+  4201 798.0820 MiB   0.0000 MiB           1               h_max_bri_az_list = []
+  4202 798.0820 MiB   0.0000 MiB           1               h_max_bri_arx_list = []
+  4203 798.0820 MiB   0.0000 MiB           1               h_max_bri_ary_list = []
+  4204 798.0820 MiB   0.0000 MiB           1               h_max_bri_arz_list = []
+  4205 801.3086 MiB  -0.0117 MiB           9               for k_node in self.attend_post_node_list:
+  4206                                                         # l_max_reduction_ration = [get_data_for_table(data_bri[m][l_wheelset],
+  4207                                                         #                                              bri_acc_method, dt, bri_acc_filt_range,
+  4208                                                         #                                              h_speed_list[m])
+  4209                                                         #                           for m in range(len(data_bri))]  # 一维，各速度档该轮对最大减载率
+  4210 801.3086 MiB   0.0039 MiB           8                   k_idx_in_vbc = h_post_node_id_list.index(k_node) + 1  # 当前处理的后处理结点，在此项目中是第几个post，从1开始
+  4211 801.3086 MiB   1.1406 MiB          56                   k_max_bri_dx = [get_data_for_table(data_bri[m][0*h_post_node_count+(k_idx_in_vbc-1)],
+  4212 801.3086 MiB  -0.0117 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4213 801.3086 MiB  -0.0117 MiB           8                                   for m in range(len(data_bri))]  # 一维，各速度档该结点的最大dx，下同
+  4214 801.3086 MiB   0.1680 MiB          56                   k_max_bri_dy = [get_data_for_table(data_bri[m][1*h_post_node_count+(k_idx_in_vbc-1)],
+  4215 801.3086 MiB  -0.0117 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4216 801.3086 MiB  -0.0117 MiB           8                                   for m in range(len(data_bri))]
+  4217 801.3086 MiB   0.1680 MiB          56                   k_max_bri_dz = [get_data_for_table(data_bri[m][2*h_post_node_count+(k_idx_in_vbc-1)],
+  4218 801.3086 MiB  -0.0117 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4219 801.3086 MiB  -0.0117 MiB           8                                   for m in range(len(data_bri))]
+  4220 801.3086 MiB  -0.0820 MiB          56                   k_max_bri_rx = [get_data_for_table(data_bri[m][3*h_post_node_count+(k_idx_in_vbc-1)],
+  4221 801.3086 MiB  -0.0117 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4222 801.3086 MiB  -0.0117 MiB           8                                   for m in range(len(data_bri))]
+  4223 801.3086 MiB   0.1914 MiB          56                   k_max_bri_ry = [get_data_for_table(data_bri[m][4*h_post_node_count+(k_idx_in_vbc-1)],
+  4224 801.3086 MiB  -0.0117 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4225 801.3086 MiB  -0.0117 MiB           8                                   for m in range(len(data_bri))]
+  4226 801.3086 MiB   0.2500 MiB          56                   k_max_bri_rz = [get_data_for_table(data_bri[m][5*h_post_node_count+(k_idx_in_vbc-1)],
+  4227 801.3086 MiB   0.0000 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4228 801.3086 MiB   0.0000 MiB           8                                   for m in range(len(data_bri))]
+  4229 801.3086 MiB  -0.0352 MiB          56                   k_max_bri_ax = [get_data_for_table(data_bri[m][6*h_post_node_count+(k_idx_in_vbc-1)],
+  4230 801.3086 MiB   0.0000 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4231 801.3086 MiB   0.0000 MiB           8                                   for m in range(len(data_bri))]  # 一维，各速度档该结点的最大ax，下同
+  4232 801.3086 MiB   0.1680 MiB          56                   k_max_bri_ay = [get_data_for_table(data_bri[m][7*h_post_node_count+(k_idx_in_vbc-1)],
+  4233 801.3086 MiB  -0.0117 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4234 801.3086 MiB  -0.0117 MiB           8                                   for m in range(len(data_bri))]
+  4235 801.3086 MiB   0.1680 MiB          56                   k_max_bri_az = [get_data_for_table(data_bri[m][8*h_post_node_count+(k_idx_in_vbc-1)],
+  4236 801.3086 MiB  -0.0117 MiB           8                                                      bri_acc_method, dt, bri_acc_filt_range)
+  4237 801.3086 MiB  -0.0117 MiB           8                                   for m in range(len(data_bri))]
+  4238 801.3086 MiB   0.1680 MiB          56                   k_max_bri_arx = [get_data_for_table(data_bri[m][9*h_post_node_count+(k_idx_in_vbc-1)],
+  4239 801.3086 MiB  -0.0117 MiB           8                                                       bri_acc_method, dt, bri_acc_filt_range)
+  4240 801.3086 MiB  -0.0117 MiB           8                                    for m in range(len(data_bri))]
+  4241 801.3086 MiB   0.1680 MiB          56                   k_max_bri_ary = [get_data_for_table(data_bri[m][10*h_post_node_count+(k_idx_in_vbc-1)],
+  4242 801.3086 MiB  -0.0117 MiB           8                                                       bri_acc_method, dt, bri_acc_filt_range)
+  4243 801.3086 MiB  -0.0117 MiB           8                                    for m in range(len(data_bri))]
+  4244 801.3086 MiB  -0.0820 MiB          56                   k_max_bri_arz = [get_data_for_table(data_bri[m][11*h_post_node_count+(k_idx_in_vbc-1)],
+  4245 801.3086 MiB  -0.0117 MiB           8                                                       bri_acc_method, dt, bri_acc_filt_range)
+  4246 801.3086 MiB  -0.0117 MiB           8                                    for m in range(len(data_bri))]
+  4247 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_dx_list.append(k_max_bri_dx)
+  4248 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_dy_list.append(k_max_bri_dy)
+  4249 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_dz_list.append(k_max_bri_dz)
+  4250 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_rx_list.append(k_max_bri_rx)
+  4251 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_ry_list.append(k_max_bri_ry)
+  4252 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_rz_list.append(k_max_bri_rz)
+  4253 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_ax_list.append(k_max_bri_ax)
+  4254 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_ay_list.append(k_max_bri_ay)
+  4255 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_az_list.append(k_max_bri_az)
+  4256 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_arx_list.append(k_max_bri_arx)
+  4257 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_ary_list.append(k_max_bri_ary)
+  4258 801.3086 MiB  -0.0117 MiB           8                   h_max_bri_arz_list.append(k_max_bri_arz)
+  4259 801.3086 MiB   0.0000 MiB           1               max_bri_dx_list.append(h_max_bri_dx_list)
+  4260 801.3086 MiB   0.0000 MiB           1               max_bri_dy_list.append(h_max_bri_dy_list)
+  4261 801.3086 MiB   0.0000 MiB           1               max_bri_dz_list.append(h_max_bri_dz_list)
+  4262 801.3086 MiB   0.0000 MiB           1               max_bri_rx_list.append(h_max_bri_rx_list)
+  4263 801.3086 MiB   0.0000 MiB           1               max_bri_ry_list.append(h_max_bri_ry_list)
+  4264 801.3086 MiB   0.0000 MiB           1               max_bri_rz_list.append(h_max_bri_rz_list)
+  4265 801.3086 MiB   0.0000 MiB           1               max_bri_ax_list.append(h_max_bri_ax_list)
+  4266 801.3086 MiB   0.0000 MiB           1               max_bri_ay_list.append(h_max_bri_ay_list)
+  4267 801.3086 MiB   0.0000 MiB           1               max_bri_az_list.append(h_max_bri_az_list)
+  4268 801.3086 MiB   0.0000 MiB           1               max_bri_arx_list.append(h_max_bri_arx_list)
+  4269 801.3086 MiB   0.0000 MiB           1               max_bri_ary_list.append(h_max_bri_ary_list)
+  4270 801.3086 MiB   0.0000 MiB           1               max_bri_arz_list.append(h_max_bri_arz_list)
+  4271                                         
+  4272 801.3086 MiB   0.0000 MiB           1           if self.postTableRangeSel.currentIndex() == 0:
+  4273 801.3086 MiB   0.0000 MiB           1               condition_name_list = ['当前工况']
+  4274                                                 else:
+  4275                                                     condition_name_list = [self.attendSonPathList.item(i_row).text()
+  4276                                                                            for i_row in range(self.attendSonPathList.count())]
+  4277                                                 # speed_num = speed_count_list[0]
+  4278 827.6133 MiB  26.3047 MiB           2           post_tb_show_dia = GuidePostTableShowDialog(condition_name_list, self.vehicle_type_dict,
+  4279 801.3086 MiB   0.0000 MiB           1                                                       veh_acc_method, bri_acc_method, wheel_force_method,
+  4280 801.3086 MiB   0.0000 MiB           1                                                       veh_acc_filt_range, bri_acc_filt_range, wheel_force_filt_range,
+  4281 801.3086 MiB   0.0000 MiB           1                                                       self.attend_post_node_list, self.baseline_post_node_dict_for_table,
+  4282 801.3086 MiB   0.0000 MiB           1                                                       max_reduction_ration_dict_by_veh_type, max_vertical_wheel_force_dict_by_veh_type,
+  4283 801.3086 MiB   0.0000 MiB           1                                                       max_derail_factor_dict_by_veh_type, max_horizontal_wheel_force_dict_by_veh_type,
+  4284 801.3086 MiB   0.0000 MiB           1                                                       max_dynamic_irr_vertical_dict_by_veh_type, max_dynamic_irr_horizontal_dict_by_veh_type,

@@ -1,0 +1,131 @@
+ 
+  !***GaoTieBeam56是墩底加了大质量、并释放了墩底节点横桥向的约束
+
+ FINISH $ /CLEAR,START 
+ /prep7
+ et,1,beam4
+
+ et,3,MASS21   !附加质量（通过变化密度更好）
+ R,3,0,0,2.0E+12,0,0,0
+  !*************************材料特性：墩C35和梁C50*************************************
+
+MP,EX,                  1,    0.31500E+11         !C35混凝土弹性模量是3.15×10^4MPa
+MP,PRXY,                1,    0.20000E+00         !混凝土泊松比规范取0.2
+MP,DENSE,               1,    0.24370E+04          !C35混凝土约2400kg（受配筋影响）,考虑钢筋后是2437
+MP,EX,                  2,    0.34500E+11         !C50混凝土弹性模量是3.45×10^4MPa
+MP,PRXY,                2,    0.20000E+00         !混凝土泊松比规范取0.2
+MP,DENSE,               2,    0.41950E+04         !C50混凝土约2500kg（受配筋影响）考虑钢筋后是4195
+
+  !*************************截面特性：墩C35和梁C50*************************************
+R, 1,    12.563694869359,    5.019879691303,    32.661483652890,    10.393057285968,    10.496258140051
+RMORE, ,     16.030281735519
+R, 2,    8.806584572821,    10.851703163236,   87.485242366791,    5.287667277220,    2.104290468523
+RMORE, ,     22.375807094170           ! 依次是截面面积、IZZ惯性矩，IYY惯性矩，TKZ沿Z轴单元厚度，TKY沿Y轴单元厚度，THETA绕X轴的转角，ISTRN初始应变，和IXX扭转惯性矩，"RMORE,"的,前边应该也算一个
+
+  !*************************节点特性*************************************
+  !墩高15m，每m一个节点
+*DO,I,1,16
+X=0
+Y=I-1
+Z=0
+N,I,X,Y,Z
+*ENDDO
+*DO,I,17,32
+X=32
+Y=I-17
+Z=0
+N,I,X,Y,Z
+*ENDDO
+  !梁
+*DO,I,33,65
+X=I-33
+Y=15+1.985
+Z=0
+N,I,X,Y,Z
+*ENDDO
+
+  !定义柱单元
+*DO,I,1,15
+TYPE,1
+MAT,1
+REAL,1
+E,I,I+1
+*ENDDO
+
+*DO,I,16,30
+TYPE,1
+MAT,1
+REAL,1
+E,I+1,I+2
+*ENDDO
+
+!定义梁单元
+*DO,I,31,62
+TYPE,1
+MAT,2
+REAL,2
+E,I+2,I+3
+*ENDDO
+
+TYPE,3
+REAL,3
+E,1
+TYPE,3
+REAL,3
+E,17
+
+!墩底约束
+D,1,UX,,,,,UY,ROTX,ROTY,ROTZ
+D,17,UX,,,,,UY,ROTX,ROTY,ROTZ
+
+!墩顶简支（主从约束）************************************
+NSEL,S, , ,16              !选择16节点
+NSEL,A, , ,33              !和33节点
+CP,NEXT,UX ,ALL, 
+NSEL,S, , ,16
+NSEL,A, , ,33
+CP,NEXT,UY ,ALL,        
+NSEL,S, , ,16
+NSEL,A, , ,33
+CP,NEXT,UZ ,ALL,        
+NSEL,S, , ,16
+NSEL,A, , ,33
+CP,NEXT,ROTX ,ALL, 
+NSEL,S, , ,32
+NSEL,A, , ,65
+CP,NEXT,UY ,ALL,        
+NSEL,S, , ,32
+NSEL,A, , ,65
+CP,NEXT,UZ ,ALL,        
+NSEL,S, , ,32
+NSEL,A, , ,65
+CP,NEXT,ROTX ,ALL,        
+
+ALLSEL             
+
+
+/SOLU $                                !进入求解模块
+ANTYPE,2 $                           !瞬态分析
+modenumber=100                !模态数目100
+MSAVE,0 $                            !指定求解方法
+MODOPT,LANB,modenumber $              !模态提取方法：分块兰索斯法
+EQSLV,SPAR                          !方程求解类型
+MXPAND,modenumber, , ,0 $ 
+LUMPM,ON                          !打开集中质量
+!PSTRES,0 $                            !预应力
+!MODOPT,LANB,modenumber,0,0, ,OFF $  !标准化控制关
+SOLVE $                                !求解
+FINISH $                               !正常退出处理模块
+
+/POST1 $ 
+SET,LIST $                             !读取频率信息
+!/EFACET,1  $                         !定义单元边界分段数目
+!SET,FIRST $ 
+!PLNSOL, U,SUM, 0,1.0           !显示节点位移。0意味着只显示结构变形图，1.0为缩放因子                                                                                                                                                                                                                                                                                                     
+SET,FIRST                                    ! 选取第一阶
+PLDISP,2                               ! 显示变形
+FINI
+
+
+
+

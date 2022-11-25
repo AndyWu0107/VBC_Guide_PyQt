@@ -1,0 +1,17 @@
+
+!本函数从当前存储的节点中获取其位移或模态位移响应，并存入NodeDisplacement中
+*if,NodeCount,ge,1,then
+NodeDisplacement=
+*dim,NodeDisplacement,array,NodeCount,6
+*DO,in,1,NodeCount
+	 NodeDisplacement(in,1)=ux(NodeNumber(in))
+   NodeDisplacement(in,2)=uy(NodeNumber(in))
+   NodeDisplacement(in,3)=uz(NodeNumber(in))
+	 NodeDisplacement(in,4)=rotx(NodeNumber(in))
+   NodeDisplacement(in,5)=roty(NodeNumber(in))
+   NodeDisplacement(in,6)=rotz(NodeNumber(in))   
+*ENDDO
+*endif
+
+
+

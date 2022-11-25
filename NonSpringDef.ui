@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NonSpringDef</class>
+ <widget class="QDialog" name="NonSpringDef">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>960</width>
+    <height>651</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>960</width>
+    <height>651</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>960</width>
+    <height>651</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>非线性弹簧及阻尼单元参数编辑</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>VBC.png</normaloff>VBC.png</iconset>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>90</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>X方向</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="NonClassSel_X">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>90</y>
+     <width>181</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>无</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>线性阻尼</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>抗蛇行减振器</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>双线性弹簧</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>三次抛物线刚度</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>库伦摩擦阻尼</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>180</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Y方向</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>270</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Z方向</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>360</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>RX方向</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>450</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>RY方向</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>540</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>RZ方向</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="NonParaTable_X">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>70</y>
+     <width>651</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>4</number>
+   </property>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>150</number>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>参数值</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>粘滞阻尼系数C/(N·s/m)</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数2</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数3</string>
+    </property>
+   </column>
+   <column/>
+  </widget>
+  <widget class="QTableWidget" name="NonParaTable_Y">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>160</y>
+     <width>651</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>4</number>
+   </property>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>150</number>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>参数值</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>参数1</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数2</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数3</string>
+    </property>
+   </column>
+   <column/>
+  </widget>
+  <widget class="QTableWidget" name="NonParaTable_Z">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>250</y>
+     <width>651</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>4</number>
+   </property>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>150</number>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>参数值</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>参数1</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数2</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数3</string>
+    </property>
+   </column>
+   <column/>
+  </widget>
+  <widget class="QTableWidget" name="NonParaTable_RX">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>340</y>
+     <width>651</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>4</number>
+   </property>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>150</number>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>参数值</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>参数1</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数2</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数3</string>
+    </property>
+   </column>
+   <column/>
+  </widget>
+  <widget class="QTableWidget" name="NonParaTable_RY">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>430</y>
+     <width>651</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>4</number>
+   </property>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>150</number>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>参数值</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>参数1</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数2</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数3</string>
+    </property>
+   </column>
+   <column/>
+  </widget>
+  <widget class="QTableWidget" name="NonParaTable_RZ">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>520</y>
+     <width>651</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>4</number>
+   </property>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>150</number>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>参数值</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>参数1</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数2</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>参数3</string>
+    </property>
+   </column>
+   <column/>
+  </widget>
+  <widget class="QPushButton" name="SaveNonPara">
+   <property name="geometry">
+    <rect>
+     <x>300</x>
+     <y>610</y>
+     <width>91</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="AbandonNonPara">
+   <property name="geometry">
+    <rect>
+     <x>570</x>
+     <y>610</y>
+     <width>91</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>放弃</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="NonClassSel_Y">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>180</y>
+     <width>181</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>无</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>线性阻尼</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>抗蛇行减振器</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>双线性弹簧</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>三次抛物线刚度</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>库伦摩擦阻尼</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QComboBox" name="NonClassSel_Z">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>270</y>
+     <width>181</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>无</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>线性阻尼</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>抗蛇行减振器</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>双线性弹簧</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>三次抛物线刚度</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>库伦摩擦阻尼</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QComboBox" name="NonClassSel_RX">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>360</y>
+     <width>181</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>无</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>线性阻尼</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>抗蛇行减振器</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>双线性弹簧</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>三次抛物线刚度</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>库伦摩擦阻尼</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QComboBox" name="NonClassSel_RY">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>450</y>
+     <width>181</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>无</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>线性阻尼</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>抗蛇行减振器</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>双线性弹簧</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>三次抛物线刚度</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>库伦摩擦阻尼</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QComboBox" name="NonClassSel_RZ">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>540</y>
+     <width>181</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>无</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>线性阻尼</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>抗蛇行减振器</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>双线性弹簧</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>三次抛物线刚度</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>库伦摩擦阻尼</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>20</y>
+     <width>111</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>弹簧/阻尼单元名称</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="nonSpringNameEnter">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>20</y>
+     <width>781</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

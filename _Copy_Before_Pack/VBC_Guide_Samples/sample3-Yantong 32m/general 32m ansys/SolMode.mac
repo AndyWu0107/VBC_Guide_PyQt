@@ -1,0 +1,22 @@
+ALLSEL             
+/SOLU $                                !进入求解模块
+ANTYPE,2 $                           !瞬态分析
+modenumber=100                !模态数目100
+MSAVE,0 $                            !指定求解过程中内存使用方法
+MODOPT,LANB,modenumber $              !模态提取方法：分块兰索斯法
+EQSLV,SPAR                          !方程求解类型
+MXPAND,modenumber, , ,0 $ 
+!LUMPM,ON                          !打开集中质量
+!PSTRES,0 $                            !预应力
+!MODOPT,LANB,modenumber,0,0, ,OFF $  !标准化控制关
+SOLVE $                                !求解
+FINISH $                               !正常退出处理模块
+
+/POST1 $ 
+SET,LIST $                             !读取频率信息
+!/EFACET,1  $                         !定义单元边界分段数目
+!SET,FIRST $ 
+!PLNSOL, U,SUM, 0,1.0           !显示节点位移。0意味着只显示结构变形图，1.0为缩放因子                                                                                                                                                                                                                                                                                                     
+SET,FIRST                                    ! 选取第一阶
+PLDISP,2                               ! 显示变形
+FINI

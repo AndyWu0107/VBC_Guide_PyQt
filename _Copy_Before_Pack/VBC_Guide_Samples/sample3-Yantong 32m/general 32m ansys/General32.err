@@ -1,0 +1,116 @@
+/COM,ANSYS RELEASE Release 19.1      BUILD 19.1      UP20180418       10:28:21
+/COM,ANSYS RELEASE Release 19.1      BUILD 19.1      UP20180418       10:37:33
+
+ *** WARNING ***                         CP =       1.984   TIME= 10:37:49
+ No *DO trips needed, enter *ENDDO .                                     
+
+ *** WARNING ***                         CP =       2.047   TIME= 10:37:49
+ No nodes defined for select operations.                                 
+
+ *** ERROR ***                           CP =       2.062   TIME= 10:37:49
+ Node 0 is not defined.                                                  
+
+ *** ERROR ***                           CP =       2.141   TIME= 10:37:53
+ Node 0 is not defined.                                                  
+
+ *** ERROR ***                           CP =       2.188   TIME= 10:37:54
+ Node 0 is not defined.                                                  
+
+ *** ERROR ***                           CP =       2.219   TIME= 10:37:54
+ Node 0 is not defined.                                                  
+
+ *** ERROR ***                           CP =       2.266   TIME= 10:37:55
+ Node 0 is not defined.                                                  
+
+ *** ERROR ***     SUPPRESSED MESSAGE    CP =       2.266   TIME= 10:37:55
+ Node 0 is not defined.                                                  
+
+ *** WARNING ***                         CP =       2.266   TIME= 10:37:55
+ No *DO trips needed, enter *ENDDO .                                     
+
+ *** WARNING ***                         CP =       2.281   TIME= 10:37:55
+ No *DO trips needed, enter *ENDDO .                                     
+/COM,ANSYS RELEASE Release 19.1      BUILD 19.1      UP20180418       10:38:36
+
+ *** WARNING ***                         CP =       2.375   TIME= 10:39:03
+ The EPLOT command cannot be executed.  The selected elements cannot be  
+ displayed by PowerGraphics.  To correct this situation, select          
+ different elements or turn off PowerGraphics.                           
+
+ *** WARNING ***                         CP =      13.141   TIME= 10:40:05
+ No *DO trips needed, enter *ENDDO .                                     
+
+ *** WARNING ***                         CP =      14.016   TIME= 10:40:05
+ No *DO trips needed, enter *ENDDO .                                     
+
+ *** WARNING ***                         CP =      19.078   TIME= 10:40:41
+ No *DO trips needed, enter *ENDDO .                                     
+
+ *** WARNING ***                         CP =      21.516   TIME= 11:21:54
+ The EPLOT command cannot be executed.  The selected elements cannot be  
+ displayed by PowerGraphics.  To correct this situation, select          
+ different elements or turn off PowerGraphics.                           
+
+ *** ERROR ***                           CP =     125.922   TIME= 12:36:57
+ No dimensions set for parameter= NODES.                                 
+
+ *** ERROR ***                           CP =     127.062   TIME= 12:37:04
+ The above error occurred processing field= NODES(INN)                   
+  Line= *SET,in,(NODES(INN)).                                            
+
+ *** WARNING ***                         CP =     136.188   TIME= 12:37:26
+ No *DO trips needed, enter *ENDDO .                                     
+
+ *** WARNING ***                         CP =     137.141   TIME= 12:37:26
+ No *DO trips needed, enter *ENDDO .                                     
+
+ *** WARNING ***                         CP =     143.172   TIME= 12:37:44
+ No *DO trips needed, enter *ENDDO .                                     
+
+ *** WARNING ***                         CP =     145.703   TIME= 19:00:18
+ During this session a solution was performed using 6 CPU cores in       
+ shared-memory parallel (SMP) mode (-np 6).  It is strongly recommended  
+ to use distributed memory parallel (DMP) mode instead (-dis -np 6).     
+ DMP mode typically outperforms SMP mode, even when running on a single  
+ system.  For more information, see the ANSYS Parallel Processing Guide  
+ in the ANSYS Help system.                                               
+/COM,ANSYS RELEASE Release 19.1      BUILD 19.1      UP20180418       16:53:33
+
+ *** WARNING ***                         CP =       3.828   TIME= 16:54:27
+ The EPLOT command cannot be executed.  The selected elements cannot be  
+ displayed by PowerGraphics.  To correct this situation, select          
+ different elements or turn off PowerGraphics.                           
+
+ *** WARNING ***                         CP =      18.688   TIME= 17:06:04
+ The EPLOT command cannot be executed.  The selected elements cannot be  
+ displayed by PowerGraphics.  To correct this situation, select          
+ different elements or turn off PowerGraphics.                           
+
+ *** ERROR ***                           CP =      26.406   TIME= 13:07:51
+ An unexpected error ( SIG$BREAK ) has occurred...  ANSYS internal data  
+ has been corrupted.  ANSYS is unable to recover and will terminate.     
+ Previously saved files are unaffected.  Please send the data leading    
+ to this operation to your technical support provider, as this will      
+ allow ANSYS, Inc to improve the program.                                
+
+ *** ERROR ***                           CP =      26.422   TIME= 13:07:51
+ An unexpected error ( SIG$SEGV ) has occurred...  ANSYS internal data   
+ has been corrupted.  ANSYS is unable to recover and will terminate.     
+ Previously saved files are unaffected.  Please send the data leading    
+ to this operation to your technical support provider, as this will      
+ allow ANSYS, Inc to improve the program.                                
+/COM,ANSYS RELEASE Release 19.1      BUILD 19.1      UP20180418       13:48:58
+
+ *** ERROR ***                           CP =       5.219   TIME= 14:41:19
+ An unexpected error ( SIG$BREAK ) has occurred...  ANSYS internal data  
+ has been corrupted.  ANSYS is unable to recover and will terminate.     
+ Previously saved files are unaffected.  Please send the data leading    
+ to this operation to your technical support provider, as this will      
+ allow ANSYS, Inc to improve the program.                                
+
+ *** ERROR ***                           CP =       5.375   TIME= 14:41:19
+ An unexpected error ( SIG$SEGV ) has occurred...  ANSYS internal data   
+ has been corrupted.  ANSYS is unable to recover and will terminate.     
+ Previously saved files are unaffected.  Please send the data leading    
+ to this operation to your technical support provider, as this will      
+ allow ANSYS, Inc to improve the program.                                

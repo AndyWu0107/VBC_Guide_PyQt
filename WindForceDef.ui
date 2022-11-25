@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WindForceDef</class>
+ <widget class="QDialog" name="WindForceDef">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>592</width>
+    <height>450</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>592</width>
+    <height>450</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>592</width>
+    <height>450</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>风力系数编辑</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>VBC.png</normaloff>VBC.png</iconset>
+  </property>
+  <widget class="QTableWidget" name="windForceCoeTable">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>180</y>
+     <width>551</width>
+     <height>211</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>6</number>
+   </property>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>72</number>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>阻力系数(N)</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>升力系数(N)</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>侧滚力矩系数(N·m)</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>纵向阻力系数(N)</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>点头力矩系数(N·m)</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>摇头力矩系数(N·m)</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>A</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>B</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>C</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>D</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>E</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>F</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QPushButton" name="SaveWindForce">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>410</y>
+     <width>71</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="AbandonWindForce">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>410</y>
+     <width>71</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>放弃</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>风力系数组名称</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="windForceNameEnter">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>20</y>
+     <width>441</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>281</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Times New Roman</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;F&lt;span style=&quot; vertical-align:sub;&quot;&gt;C&lt;/span&gt; = A + B·α + C·α&lt;span style=&quot; vertical-align:super;&quot;&gt;2&lt;/span&gt; + D·α&lt;span style=&quot; vertical-align:super;&quot;&gt;3&lt;/span&gt; + E·α&lt;span style=&quot; vertical-align:super;&quot;&gt;4&lt;/span&gt; + F·α&lt;span style=&quot; vertical-align:super;&quot;&gt;5&lt;/span&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::RichText</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="angleLabel">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>140</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Times New Roman</family>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;（&lt;/span&gt;α: &lt;span style=&quot; font-size:9pt;&quot;&gt;风攻角）&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::RichText</enum>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="lengthParasTable">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>60</y>
+     <width>551</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="columnCount">
+    <number>3</number>
+   </property>
+   <attribute name="horizontalHeaderVisible">
+    <bool>true</bool>
+   </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>183</number>
+   </attribute>
+   <attribute name="verticalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <row>
+    <property name="text">
+     <string/>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>高度(m)</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>宽度(m)</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>长度(m)</string>
+    </property>
+   </column>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

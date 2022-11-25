@@ -1,0 +1,4 @@
+ALLSEL             
+/SOLU $                                !进入求解模块
+ANTYPE,0
+solve

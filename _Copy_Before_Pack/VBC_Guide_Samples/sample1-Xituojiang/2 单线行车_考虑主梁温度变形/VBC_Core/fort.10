@@ -1,0 +1,9 @@
+    1                    !Integral Method (Wilson:0;Newmark:1;New Explicit:2;Rugge-kutta:4;PostPro:-1)
+        0.100000E-03                                                      !Time step for integration
+   10   0.100000E-01                           !Defined_Iteration_Number,Defined_Iteration_Tolerance
+   10                                                                     !Output Result Every N Steps
+    0                         !Option for wheel-rail contact (Sptial:1;Vertical only:0;Moving load:-1)
+    0                                       !Coordination_sys_bridge (Z axis upward:1;Y axis upward:0)
+    0                                                            !Readfrom_solftware (ANSYS:0;MIDAS:1)
+    0   0.000000E+00   0.000000E+00       !IsContact,StiContact and DamContact of track contact,for wheel-rail jump
+   0.143500E+01                                                                    !Track width

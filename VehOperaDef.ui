@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>vehOperaDef</class>
+ <widget class="QDialog" name="vehOperaDef">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>508</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>508</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>800</width>
+    <height>508</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>车列运行工况编辑</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>VBC.png</normaloff>VBC.png</iconset>
+  </property>
+  <widget class="QTableWidget" name="vehOperaTable">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>50</y>
+     <width>739</width>
+     <height>401</height>
+    </rect>
+   </property>
+   <attribute name="horizontalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <attribute name="horizontalHeaderDefaultSectionSize">
+    <number>70</number>
+   </attribute>
+   <attribute name="verticalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <row>
+    <property name="text">
+     <string>速度档位1</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>速度档位2</string>
+    </property>
+   </row>
+   <row>
+    <property name="text">
+     <string>速度档位3</string>
+    </property>
+   </row>
+   <column>
+    <property name="text">
+     <string>速度档位</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>初速度/(km/h)</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>预振距离/m</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>余振距离/m</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>加速度/(m/s2)</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>制动或加速开始时刻/s</string>
+    </property>
+   </column>
+  </widget>
+  <widget class="QPushButton" name="vehOperaSave">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>470</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>保存</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="vehOperaAbandon">
+   <property name="geometry">
+    <rect>
+     <x>440</x>
+     <y>470</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>放弃</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="vehOperaAdd">
+   <property name="geometry">
+    <rect>
+     <x>500</x>
+     <y>20</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>+</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="vehOperaDel">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>20</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>-</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="vehOperaUp">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>20</y>
+     <width>31</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>↑</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="vehOperaDown">
+   <property name="geometry">
+    <rect>
+     <x>730</x>
+     <y>20</y>
+     <width>31</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>↓</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

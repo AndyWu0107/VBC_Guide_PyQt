@@ -1,0 +1,77 @@
+!******提取所有计算的模态，或者修改需要导出的模态数量******
+/post1
+*GET,Modalcount, ACTIVE, 0, SET, nset
+!Modalcount=800   
+!******提取所有计算的模态，或者修改需要导出的模态数量******
+
+!******指定模态阻尼比****** 
+Damperration=0.05
+!******指定模态阻尼比****** 
+
+!******指定输出模态文件名及路径****** 
+ModefileNumber=1
+modefiename1='Bridge_modalvectors_optimized_32m'
+modepathname='D:\VBC_Guide_Samples\sample3-Yantong 32m\optimized 32m ansys'
+!******指定输出模态文件名及路径****** 
+
+!******选择需要在VBC中定义弹簧-阻尼单元的节点，并存为节点组，注意：仅需要选择两个节点之间的一个弹簧，VBC中可以定义多个方向的弹簧参数****** 
+esel,none
+nsle,s
+cm,nodesspring,node
+cm,elementspring,element
+!******选择需要在VBC中定义弹簧-阻尼单元的节点，并存为节点组，注意：仅需要选择两个节点之间的一个弹簧，VBC中可以定义多个方向的弹簧参数****** 
+
+!******将弹簧实常数编号转换为VBC中弹簧编号******
+SpringType=2
+SpringTypemapping=
+*if,SpringType,ge,1,then
+*dim,SpringTypemapping,array,SpringType,2
+SpringTypemapping(1,1)=1003,1007
+SpringTypemapping(1,2)=5,3
+*endif
+!******将弹簧实常数编号转换为VBC中弹簧编号******
+
+!******选择需要在VBC中定义为轨道的节点，并存为节点组******
+nsel,all
+cm,nodestrack,node
+!******选择需要在VBC中定义为轨道的节点，并存为节点组******
+
+!******选择需要在VBC中定义后处理位移和应力/内力的节点，并存为节点组******
+nsel,none
+cm,nodespost,node
+
+esel,none
+esln,r
+cm,elementpost,element
+!******选择需要在VBC中定义后处理位移和应力/内力的节点，并存为节点组******
+
+
+!******以下部分通常不需修改******
+!******选择需要在VBC中定义的所有节点，并存为节点组******
+nsel,s,,, nodesspring
+nsel,a,,, nodestrack
+nsel,a,,, nodespost
+cm,nodesall,node
+!******选择需要在VBC中定义的所有节点，并存为节点组******
+
+WriteBridge
+
+ 
+ALLSEL
+/solu
+antype,modal
+OUTRES,ALL,ALL
+modopt,lanb,Modalcount            !分块兰索斯法
+mxpand,Modalcount,,,NO
+lumpm,off                 !采用一致质量矩阵
+solve
+finish
+
+nsel,s,,, nodesall
+cm,nodesall,node
+esel,none
+cm,elementpost,element
+WriteMode,modefiename1
+
+
+

@@ -1,0 +1,30 @@
+
+!本函数从当前存储的节点中获取其位移或模态位移响应，并存入NodeDisplacement中
+*if,ElementCount,ge,1,then
+    ETABLE, S1 , SMISC,1
+    ETABLE, S2 , SMISC,2
+    ETABLE, S3 , SMISC,3
+    ETABLE, S4 , SMISC,4
+    ETABLE, S5 , SMISC,5
+    ETABLE, S6 , SMISC,6
+ElementStress=
+*dim,ElementStress,array,ElementCount,6
+*DO,in,1,ElementCount
+	*GET,F1, ETAB, 1, ELEM, in
+	*GET,F2, ETAB, 2, ELEM, in
+	*GET,F3, ETAB, 3, ELEM, in
+	*GET,F4, ETAB, 4, ELEM, in						
+	*GET,F5, ETAB, 5, ELEM, in
+	*GET,F6, ETAB, 6, ELEM, in						
+
+	 ElementStress(in,1)=F1
+   ElementStress(in,2)=F2
+   ElementStress(in,3)=F3
+	 ElementStress(in,4)=F4
+   ElementStress(in,5)=F5
+   ElementStress(in,6)=F6
+*ENDDO
+*endif
+
+
+

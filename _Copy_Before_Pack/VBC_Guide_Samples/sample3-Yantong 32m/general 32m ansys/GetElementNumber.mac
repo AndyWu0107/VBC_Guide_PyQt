@@ -1,0 +1,26 @@
+!本函数从当前选择的节点中获取节点数量及其编号，并存入NodeNumber中
+*Get,ElementCount,ELEMENT,0,COUNT
+*if,ElementCount,ge,1,then
+ElementNumber=
+ElementInfo=
+*dim,ElementNumber,array,ElementCount
+*dim,ElementInfo,array,ElementCount,3
+*Get,in,Element,0,NUM,MIN
+ElementNumber(1)=in
+*DO,in,1,ElementCount-1
+	 ElementNumber(in+1)=elnext(ElementNumber(in))
+*ENDDO
+*DO,in,1,ElementCount
+	 ElementInfo(in,1)=NELEM(ElementNumber(in),1)
+   ElementInfo(in,2)=NELEM(ElementNumber(in),2)
+   *GET, Ereal, ELEM, ElementNumber(in), attr,  real
+   *do,j,1,SpringType
+   *if,SpringTypemapping(j,1),eq,Ereal,then
+      ElementInfo(in,3)=SpringTypemapping(j,2)
+    *endif
+   *enddo
+*ENDDO
+*endif
+
+
+

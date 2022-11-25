@@ -1,0 +1,51 @@
+file=arg1
+/post1
+pi2=2*acos(-1)
+*CFOpen,file,dat
+*VWrite, 
+(/'******本文件为VBC程序读取桥梁、轨道模态信息的文件，格式与MIDAS软件模态表格样式类似******')
+
+*VWrite,
+(/'     模态号      圆频率                    频率                    周期')
+*VWrite,
+(/'****No.       (rad/sec)               (cycle/sec)            (sec)，   括弧部分为读取振型位移标记，不得删除或改变！******')
+
+
+*do,mi,1,modalcount
+SET,,, ,,, ,mi
+*GET,modalseigen_singe, ACTIVE, 0, SET, FREQ,,    
+*VWrite,mi,modalseigen_singe*pi2,modalseigen_singe,1/(modalseigen_singe+1e-8)
+%10I%18.6E%18.6E%18.6E           
+*enddo  
+
+*VWrite,
+(/'******振型向量 (N,m)，本行中括弧部分为读取振型位移标记，不得删除或改变！******')
+*VWrite,
+(/'******振型向量 (N,m)，本行中括弧部分为读取振型位移标记，不得删除或改变！******')
+nsel,s,,,nodesall
+GetNodeNumber
+*if,NodeCount,ge,1,then
+*do,mi,1,modalcount
+SET,,, ,,, ,mi
+GetNodeDisplacement
+*VWrite,NodeNumber(1),mi,NodeDisplacement(1,1),NodeDisplacement(1,2),NodeDisplacement(1,3),NodeDisplacement(1,4),NodeDisplacement(1,5),NodeDisplacement(1,6)
+%10I%10I%18.6E%18.6E%18.6E%18.6E%18.6E%18.6E	
+*enddo
+*endif
+ 
+ 
+*VWrite,
+(/'******节点或单元的模态应力/内力，本行中Stress 为关键词标记，不得删除或改变！******')
+
+esel,s,,,elementpost
+GetElementNumber
+*if,ElementCount,ge,1,then
+*do,mi,1,modalcount
+SET,,, ,,, ,mi
+GetElementStress
+*VWrite,ElementNumber(1),mi,ElementStress(1,1),ElementStress(1,2),ElementStress(1,3),ElementStress(1,4),ElementStress(1,5),ElementStress(1,6)
+%10I%10I%18.6E%18.6E%18.6E%18.6E%18.6E%18.6E	
+*enddo  
+*endif
+*CFClos
+

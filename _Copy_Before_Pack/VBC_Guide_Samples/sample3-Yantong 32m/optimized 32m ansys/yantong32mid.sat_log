@@ -1,0 +1,26 @@
+ 
+ *** ANSYS Connection for ACIS Log File ***
+ 
+   Version:    19.1 - ACIS 28.00
+   Build Date: 04/18/18
+   File:       D:\Yantong TQI\optmized32m\yantong32mid.sat
+ 
+Warning: Sheet body found in the model 
+         ANSYS volume is not created. 
+
+ Translation Summary:
+
+ Topological Entities:
+ Vertices:     34                 Loops:       0
+ Edges:        34                 Shells:      0
+ Faces:         1
+ B-reps:        0
+
+ Geometric Entities:
+ Curves:                        Surfaces:
+ NURBS:          0              NURBS:          0
+ Lines:          0              Planes:         0
+ Circles:        0              Cylinders:      0
+ Ellipses:       0              Cones:          0
+                                Spheres:        0
+                                Tori:           0

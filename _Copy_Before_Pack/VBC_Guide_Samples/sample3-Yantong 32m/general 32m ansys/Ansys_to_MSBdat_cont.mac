@@ -1,0 +1,71 @@
+!************************************************************************************************
+!此宏命令将ANSYS模型转换为自编程序——模态方法 的前处理数据文件。!2006.4.26 李奇 
+!程序运行完成后，在当前目录中运行批处理文件 ANSYS_Macro.dat，将创建子目录
+!FromANSYS，并将生成的七个数据文件移动到该子目录中。
+
+/post1
+Unit_Change=1
+
+
+!bridg nodes
+
+!!!!! selecting bridge nodes that needed
+nsel,all $ nsel,u,,,20000
+
+!!!!! selecting bridge nodes that needed
+
+
+*Get,NNumber_nodes_that_needed,NODE,0,COUNT
+*dim,bridge_nodes_that_needed_array,array,2,NNumber_nodes_that_needed
+i=0 
+*DO,INN,1,NNumber_nodes_that_needed
+   in=NODES(INN)
+   nsel,s,,,in
+ 	i=i+1 		
+	bridge_nodes_that_needed_array(1,i)=INN
+	bridge_nodes_that_needed_array(2,i)=in
+*ENDDO
+
+
+
+*CFOpen,bridge_modalvectors,dat
+
+
+
+*VWrite,modalcount,NNumber_nodes_that_needed
+%8I,%8I
+*VWrite, 
+%/
+*do,i,1,NNumber_nodes_that_needed
+	inn=bridge_nodes_that_needed_array(1,i)
+	*VWrite,inn
+%8I
+*enddo
+*VWrite, 
+%/
+allsel
+*do,mi,1,modalcount
+    SET,,, ,,, ,mi
+   *GET,modalseigen_singe, ACTIVE, 0, SET, FREQ,,    
+   *VWrite,modalseigen_singe
+%18.6E    
+    *DO,INN,1,NNumber_nodes_that_needed
+     					in=bridge_nodes_that_needed_array(2,INN)
+  		
+  						     ux0=ux(in)
+							uy0=uy(in)
+							uz0=uz(in)
+							rotx0=rotx(in)
+							roty0=roty(in)
+							rotz0=rotz(in)
+						*VWrite,ux0,uy0,uz0,rotx0,roty0,rotz0
+%18.6E,%18.6E,%18.6E,%18.6E,%18.6E,%18.6E	
+
+    *ENDDO
+	*VWrite, 
+%/
+*enddo
+
+
+*CFClos
+

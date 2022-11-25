@@ -1,0 +1,16 @@
+!本函数从当前选择的节点中获取节点数量及其编号，并存入NodeNumber中
+
+
+*Get,NodeCount,NODE,0,COUNT   
+*if,NodeCount,ge,1,then
+NodeNumber=
+*dim,NodeNumber,array,NodeCount
+*Get,in,NODE,0,NUM,MIN
+NodeNumber(1)=in
+*DO,in,1,NodeCount-1
+	 NodeNumber(in+1)=ndnext(NodeNumber(in))
+*ENDDO
+*endif
+
+
+

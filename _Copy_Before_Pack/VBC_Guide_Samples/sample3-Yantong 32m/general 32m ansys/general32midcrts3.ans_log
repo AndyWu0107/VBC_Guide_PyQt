@@ -1,0 +1,171 @@
+
+ *GET  _SAV1     FROM  common    ITEM=ERRCOM   INT  N=    6
+    VALUE=  5.00000000    
+
+ *GET  _SAV2     FROM  common    ITEM=ERRCOM   INT  N=    7
+    VALUE=  10000.0000    
+
+ PARAMETER _SAV3 =     0.000000000    
+
+ *GET  _SAV4     FROM  common    ITEM=ERTRKCM  INT  N=    1
+    VALUE=  5.00000000    
+
+
+ NUMBER OF DISPLAYED ERRORS ALLOWED PER COMMAND=                  5
+ NUMBER OF ERRORS ALLOWED PER COMMAND BEFORE ANSYS ABORT=     10000
+ ALL ERRORS WRITTEN TO D:\Yantong TQI\general32m\General32.err                                                                                                                                                                                                                             
+ DO NOT TERMINATE /INPUT UPON FIRST ERROR
+
+ *GET  _Z1       FROM  ACTI  ITEM=KEYW PRIGES    VALUE=  0.00000000    
+
+ *IF  _z1                               ( =   0.00000     )  GT  
+      0                                 ( =   0.00000     )  THEN    
+
+ *ELSE
+
+ KEYPOINT NUMBER =      1     2.84108       2.22032       0.00000    
+
+ KEYPOINT NUMBER =      2     2.43100      0.580000       0.00000    
+
+ KEYPOINT NUMBER =      3     1.93100      0.280000       0.00000    
+
+ KEYPOINT NUMBER =      4    -1.93100      0.280000       0.00000    
+
+ KEYPOINT NUMBER =      5    -2.43100      0.580000       0.00000    
+
+ KEYPOINT NUMBER =      6    -2.84108       2.22032       0.00000    
+
+ KEYPOINT NUMBER =      7    -2.71030       2.45857       0.00000    
+
+ KEYPOINT NUMBER =      8    -1.83600       2.75000       0.00000    
+
+ KEYPOINT NUMBER =      9     1.83600       2.75000       0.00000    
+
+ KEYPOINT NUMBER =     10     2.71030       2.45857       0.00000    
+
+ KEYPOINT NUMBER =     11     0.00000       0.00000       0.00000    
+
+ KEYPOINT NUMBER =     12     2.51577     -0.666134E-15   0.00000    
+
+ KEYPOINT NUMBER =     13     2.80681      0.227239       0.00000    
+
+ KEYPOINT NUMBER =     14     3.23074       1.92295       0.00000    
+
+ KEYPOINT NUMBER =     15     3.83504       2.48084       0.00000    
+
+ KEYPOINT NUMBER =     16     5.45000       2.75000       0.00000    
+
+ KEYPOINT NUMBER =     17     6.30000       2.81800       0.00000    
+
+ KEYPOINT NUMBER =     18     6.30000       3.05200       0.00000    
+
+ KEYPOINT NUMBER =     19     5.90000       3.05200       0.00000    
+
+ KEYPOINT NUMBER =     20     4.30000       3.02000       0.00000    
+
+ KEYPOINT NUMBER =     21     3.80000       3.03500       0.00000    
+
+ KEYPOINT NUMBER =     22    0.133227E-14   3.03500       0.00000    
+
+ KEYPOINT NUMBER =     23    -3.80000       3.03500       0.00000    
+
+ KEYPOINT NUMBER =     24    -4.30000       3.02000       0.00000    
+
+ KEYPOINT NUMBER =     25    -5.90000       3.05200       0.00000    
+
+ KEYPOINT NUMBER =     26    -6.30000       3.05200       0.00000    
+
+ KEYPOINT NUMBER =     27    -6.30000       2.81800       0.00000    
+
+ KEYPOINT NUMBER =     28    -5.45000       2.75000       0.00000    
+
+ KEYPOINT NUMBER =     29    -3.83504       2.48084       0.00000    
+
+ KEYPOINT NUMBER =     30    -3.23074       1.92295       0.00000    
+
+ KEYPOINT NUMBER =     31    -2.80681      0.227239       0.00000    
+
+ KEYPOINT NUMBER =     32    -2.51577      0.277556E-15   0.00000    
+
+ LINE NUMBER    1 edge typ  1 keypts    1    2
+
+ LINE NUMBER    2 edge typ  1 keypts    2    3
+
+ LINE NUMBER    3 edge typ  1 keypts    3    4
+
+ LINE NUMBER    4 edge typ  1 keypts    4    5
+
+ LINE NUMBER    5 edge typ  1 keypts    5    6
+
+ LINE NUMBER    6 edge typ  1 keypts    6    7
+
+ LINE NUMBER    7 edge typ  1 keypts    7    8
+
+ LINE NUMBER    8 edge typ  1 keypts    8    9
+
+ LINE NUMBER    9 edge typ  1 keypts    9   10
+
+ LINE NUMBER   10 edge typ  1 keypts   10    1
+
+ LINE NUMBER   11 edge typ  1 keypts   11   12
+
+ LINE NUMBER   12 edge typ  1 keypts   12   13
+
+ LINE NUMBER   13 edge typ  1 keypts   13   14
+
+ LINE NUMBER   14 edge typ  1 keypts   15   14
+
+ LINE NUMBER   15 edge typ  1 keypts   15   16
+
+ LINE NUMBER   16 edge typ  1 keypts   16   17
+
+ LINE NUMBER   17 edge typ  1 keypts   17   18
+
+ LINE NUMBER   18 edge typ  1 keypts   18   19
+
+ LINE NUMBER   19 edge typ  1 keypts   19   20
+
+ LINE NUMBER   20 edge typ  1 keypts   20   21
+
+ LINE NUMBER   21 edge typ  1 keypts   21   22
+
+ LINE NUMBER   22 edge typ  1 keypts   23   22
+
+ LINE NUMBER   23 edge typ  1 keypts   24   23
+
+ LINE NUMBER   24 edge typ  1 keypts   25   24
+
+ LINE NUMBER   25 edge typ  1 keypts   26   25
+
+ LINE NUMBER   26 edge typ  1 keypts   27   26
+
+ LINE NUMBER   27 edge typ  1 keypts   28   27
+
+ LINE NUMBER   28 edge typ  1 keypts   29   28
+
+ LINE NUMBER   29 edge typ  1 keypts   30   29
+
+ LINE NUMBER   30 edge typ  1 keypts   31   30
+
+ LINE NUMBER   31 edge typ  1 keypts   31   32
+
+ LINE NUMBER   32 edge typ  1 keypts   11   32
+
+ AREA NUMBER    1 surf typ  1 num loops  2 max edge 22
+  Edges
+        11        12        13        14        15        16        17        18
+        19        20        21        22        23        24        25        26
+        27        28        29        30        31        32         1         2
+         3         4         5         6         7         8         9        10
+         0         0         0         0         0         0         0         0
+         0         0         0         0
+
+ *ENDIF
+
+
+ NUMBER OF DISPLAYED ERRORS ALLOWED PER COMMAND=                  5
+ NUMBER OF ERRORS ALLOWED PER COMMAND BEFORE ANSYS ABORT=     10000
+ ALL ERRORS WRITTEN TO D:\Yantong TQI\general32m\General32.err                                                                                                                                                                                                                             
+ DO NOT TERMINATE /INPUT UPON FIRST ERROR
+
+ PROMPT TO INTERRUPT FILE BASED INPUTS (/INPUT AND MACROS) ON THE FIRST ERROR OR AFTER 5 WARNINGS

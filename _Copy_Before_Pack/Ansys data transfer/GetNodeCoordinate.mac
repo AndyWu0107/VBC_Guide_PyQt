@@ -1,0 +1,14 @@
+
+!本函数从当前存储的节点中获取其XYZ坐标，并存入NodeCoordinate中
+*if,NodeCount,ge,1,then
+NodeCoordinate=
+*dim,NodeCoordinate,array,NodeCount,3
+*DO,in,1,NodeCount
+	 NodeCoordinate(in,1)=nx(NodeNumber(in))
+   NodeCoordinate(in,2)=ny(NodeNumber(in))
+   NodeCoordinate(in,3)=nz(NodeNumber(in))
+*ENDDO
+*endif
+
+
+

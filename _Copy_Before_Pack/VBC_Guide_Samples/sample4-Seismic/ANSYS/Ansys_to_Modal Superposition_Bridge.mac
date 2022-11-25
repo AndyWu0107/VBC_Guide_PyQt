@@ -1,0 +1,78 @@
+
+nsel,all
+
+modalcount=100
+damperration=0.01
+NNumberInterface=0
+NNumberNonlinearSpring=0
+NNumberNodeOUtPUT=0
+
+*dim,nodeinterface,array,NNumberInterface
+*dim,nodedegreeoutput,array,2,NNumberNodeOUtPUT
+*dim,NonlinearSpring,array,4,0
+
+!nodedegreeoutput(1,1)=3421,2
+
+
+                      
+
+*do,i,1,NNumberNodeOUtPUT 
+nsel,a,,,nodedegreeoutput(1,i)
+*enddo
+
+cm,nodes_considered,node
+/post1
+!************************************************************************************************
+! 写结点坐标文件，每行分别为 index, x, y, z
+!************************************************************************************************
+*Get,NMax,NODE,0,NUM,MAX
+*Get,NMin,NODE,0,NUM,MIN
+*Get,NNumber,NODE,0,COUNT
+*dim,nodes,array,NNumber
+!*dim,modalsvector,array,NNumber,6,modalcount
+*dim,modalseigen,array,modalcount
+*dim,modalsdamper,array,modalcount
+
+
+NodeFile='Modal_Substructure_Bridge'
+*CFOpen,NodeFile,dat
+*VWrite,NNumber,NNumber,NNumberNonlinearSpring,NNumberNodeOUtPUT,modalcount,0
+%8I,%8I,%8I,%8I,%8I,%8I
+*VWrite, 
+%/
+
+
+    nsel,s,,,nodes_considered
+    *Get,in,NODE,0,NUM,MIN
+    NODES(1)=in
+   	*VWrite,IN,NX(IN),NY(IN),NZ(IN)
+%8I,%18.6E,%18.6E,%18.6E	
+    *DO,INN,2,NNumber
+     	nsel,s,,,nodes_considered
+     	nsel,u,,,NODES(1),NODES(INN-1)
+     	*Get,in,NODE,0,NUM,MIN
+     	NODES(INN)=IN
+	*VWrite,IN,NX(IN),NY(IN),NZ(IN)
+%8I,%18.6E,%18.6E,%18.6E	
+    *ENDDO
+*VWrite, 
+%/
+
+
+!输出轨道梁上节点信息
+*VWrite,nodes(1)
+%8I
+*VWrite, 
+%/
+
+!输出需要定义输出节点的信息
+*do,i,1,NNumberNodeOUtPUT
+nodenum=nodedegreeoutput(1,i)
+degreenum=nodedegreeoutput(2,i)
+*VWrite,nodenum,degreenum
+%8I,%8I
+*enddo
+*VWrite, 
+%/
+
+*CFClos

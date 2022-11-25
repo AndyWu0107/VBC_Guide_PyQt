@@ -1,0 +1,7 @@
+finish
+/clear
+/prep7
+~SATIN,yantong32mid,sat,'D:\Yantong TQI\optmized32m',SURFACES
+et,1,plane82 $ lesize,all,0.1 $ amesh,all
+
+secwrite,yantong32mid

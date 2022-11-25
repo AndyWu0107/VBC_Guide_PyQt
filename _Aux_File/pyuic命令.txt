@@ -1,0 +1,23 @@
+pyuic5 -o UITimeHistPlot.py TimeHistPlot.ui
+
+pyuic5 -o UIRailLocDef.py RailLocDef.ui
+
+pyuic5 -o UIVehOperaDef.py VehOperaDef.ui
+
+pyuic5 -o UINonSpringDef.py NonSpringDef.ui
+
+pyuic5 -o UIWindForceVehAssign.py WindForceVehAssign.ui
+
+pyuic5 -o UIExtForceTimeHistDef.py ExtForceTimeHistDef.ui
+
+pyuic5 -o UITrainDef.py TrainDef.ui
+
+pyuic5 -o UIWindNodeGroupDef.py WindNodeGroupDef.ui
+
+pyuic5 -o UIWindForceDef.py WindForceDef.ui
+
+pyuic5 -o UIWindFieldCtrlPtDef.py WindFieldCtrlPtDef.ui
+
+pyuic5 -o UITimeHistPlotDef.py TimeHistPlotDef.ui
+
+pyuic5 -o UIPostTableShow.py PostTableShow.ui

@@ -1,0 +1,48 @@
+finish $ /clear
+!!!!参数输入!!!!!
+econcr=3.55e10 $ prconcr=0.167 $ densconcr=2.6e3 !混凝土材料参数
+lsize=1 !梁单元尺寸
+l0=32.600 $ l=31.500 $ nsp=10 !标准跨径，计算跨径，跨数
+lgap=0.08 !梁缝宽度
+lbear=0.550 !支座中心距梁端
+lfa=0.610 $ lfb=0.695 $ lfn=0.600 $ nf=51
+!扣件间距参数：la，lb，一般间距，均布扣件段数
+dl2nd=160e3 !二期恒载(线密度)
+
+!!!!!!!!!!!!!!!!
+/prep7
+et,1,beam188 
+!keyopt,1,3,2 !二次形函数
+sectype,1,beam,mesh $ secread,general32midcrts3,,,mesh
+*GET,secarea,SECP,1,prop,area !获取截面面积
+totaldens=densconcr+dl2nd/(9.81*secarea) !自重+二期恒载对应的等效体密度
+mp,ex,1,econcr $ mp,prxy,1,prconcr $ mp,dens,1,totaldens
+
+
+n,20000,0,1,0 !梁单元坐标系定位结点(决定截面方向)
+*do,ispan,1,nsp,1 !每一个循环建一跨
+	n,1000*ispan+1,(l0+lgap)*(ispan-1),0,0 !梁左端结点!在第二及之后跨前加梁缝
+	n,1000*ispan+2,nx(1000*ispan+1)+lfa/2,0,0 !距梁左端lfa/2的结点
+	e,1000*ispan+1,1000*ispan+2,20000 !连接梁最左边一段单元(长度lfa/2)
+	n,1000*ispan+3,nx(1000*ispan+1)+lbear,0,0 !左支座中心线结点
+	d,1000*ispan+3,ux,,,,,uy,uz,rotx
+	e,1000*ispan+2,1000*ispan+3,20000
+	n,1000*ispan+4,nx(1000*ispan+2)+lfb,0,0
+	e,1000*ispan+3,1000*ispan+4,20000
+	*do,inodeave,5,nf+4,1  !此循环终点与nf的定义高度相关，疑似矛盾，有待核实
+		n,1000*ispan+inodeave,nx(1000*ispan+4)+lfn*(inodeave-4),0,0
+		e,1000*ispan+inodeave-1,1000*ispan+inodeave,20000
+	*enddo
+	n,1000*ispan+inodeave+2,nx(1000*ispan+inodeave)+lfb,0,0
+	n,1000*ispan+inodeave+3,nx(1000*ispan+1)+l0,0,0 !梁右端结点
+	n,1000*ispan+inodeave+1,nx(1000*ispan+inodeave+3)-lbear,0,0 !右支座中心线结点
+	d,1000*ispan+inodeave+1,uy,,,,,uz,rotx
+	e,1000*ispan+inodeave,1000*ispan+inodeave+1,20000
+	e,1000*ispan+inodeave+1,1000*ispan+inodeave+2,20000
+	e,1000*ispan+inodeave+2,1000*ispan+inodeave+3,20000
+*enddo
+acel,,9.81
+
+
+
+/eshape,0 $ eplot
